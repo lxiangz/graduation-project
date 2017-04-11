@@ -1,17 +1,17 @@
 <template>
   <div>
     <div class="vux-demo">
-      <img class="logo" src="../assets/vux_logo.png">
-      <h1> </h1>
+      <group-title>自动轮播</group-title>
+      <swiper :list="demo03_list" auto style="width:80%;margin:0 auto;" height="180px" dots-class="custom-bottom" dots-position="center"></swiper>
     </div>
     <group title="cell demo">
-      <cell title="Vux" value="Cool" is-link></cell>
+      <cell title="Vux" value="Cool" is-link :link="{path:'/hello'}" ></cell>
     </group>
   </div>
 </template>
 
 <script>
-import { Group, Cell } from 'vux'
+import { Group, Cell, Swiper } from 'vux'
 
 export default {
   components: {
@@ -24,7 +24,7 @@ export default {
       // with hot-reload because the reloaded component
       // preserves its current state and we are modifying
       // its initial state.
-      msg: 'Hello World!'
+      msg: 'my app!'
     }
   }
 }
