@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import App from '../App.vue'
-import home from '../components/Home.vue'
 import hello from '../components/Hello.vue'
+import home from '../components/Home.vue'
+import record from '../components/Record.vue'
 
 
 Vue.use(Router)
@@ -14,15 +15,19 @@ export default [
     children: [
       {
         path:'',
-        redirect:'/home'
+        redirect:'/hello'
+      },
+      {
+        path:'/hello',
+        component: hello
       },
       {
         path:'/home',
         component: home
       },
-      {
-        path:'/hello',
-        component: hello
+     {
+        path:'/record',
+        component:record
       }
     ]
   }
