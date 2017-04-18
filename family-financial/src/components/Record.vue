@@ -1,6 +1,6 @@
 <template>
   <div id="record">
-    <x-header >
+    <x-header :left-options="{backText: '',preventGoBack:true}"  @on-click-back="back" >
       <div slot="default" style="padding-top:5px;">
         <button-tab v-model="buttonTabIndex" >
           <button-tab-item @on-item-click="payClick()">支出</button-tab-item>
@@ -11,23 +11,32 @@
     </x-header>
     <div class="financial">
       <group gutter="0">
-        <x-input style="padding:10px 15px" required="true" placeholder="0.00">
+        <x-input style="padding:10px 15px" required placeholder="0.00">
           <span style="color:black" slot="label">金额：</span>
         </x-input>
       </group>
-      <box style="padding:0 16px 15px 16px;">
+      <box v-show="isPay" style="padding:0 16px 15px 16px;">
         <x-button  mini plain type="primary">饮料水果</x-button>
         <x-button  mini plain type="primary">买菜原料</x-button>
         <x-button  mini plain type="primary">水电燃气</x-button>
         <x-button  mini plain type="primary">早餐</x-button>
         <x-button  mini plain type="primary">午餐</x-button>
         <x-button  mini plain type="primary">晚餐</x-button>
-        <x-button  mini plain type="primary">物业费</x-button>
-        <x-button  mini plain type="primary">...</x-button>
-        <x-button  mini plain type="primary">更多&nbsp;></x-button>
+        <x-button  mini plain type="primary"  style="min-width:87px">{{paySelectedItem}}</x-button>
+        <x-button style="margin-left:39px;"  mini plain type="primary" @click.native="payMore" >更多&nbsp;></x-button>
+      </box>
+      <box v-show="!isPay" style="padding:0 16px 15px 16px;">
+        <x-button  mini plain>工资薪水</x-button>
+        <x-button  mini plain type="primary">兼职外快</x-button>
+        <x-button  mini plain type="primary">福利补贴</x-button>
+        <x-button  mini plain type="primary">礼金</x-button>
+        <x-button  mini plain type="primary">红包</x-button>
+        <x-button  mini plain type="primary">奖金</x-button>
+        <x-button  mini plain type="primary" style="min-width:87px">{{incomeSelectedItem}}</x-button>
+        <x-button style="margin-left:39px;"  mini plain type="primary" @click.native="incomeMore" >更多&nbsp;></x-button>
       </box>
       <group gutter="0">
-        <x-input style="padding:5px 15px" required="true" placeholder="...">
+        <x-input style="padding:5px 15px"  placeholder="...">
           <span style="color:black" slot="label">备注：</span>
           <box slot="right" style="border-left:1px solid;padding-left:10px;">
             <x-icon type="ios-search-strong" size="25"></x-icon>
@@ -37,7 +46,7 @@
       </group>
       <box style="padding:0px 16px 12px 16px;">
         <x-button  mini>
-          <span slot="default"><icon type="waiting-circle"></icon>04-13&nbsp;15:22</span>
+          <span slot="default"><icon type="waiting-circle"></icon>04-13&nbsp;15 : 22</span>
         </x-button>
         <x-button  mini>
           <span slot="default"><icon type="info-circle"></icon>现金</span>
@@ -47,7 +56,8 @@
     <div class="blank">&nbsp;</div>
     <div class="cost">
       <group gutter="0">
-        <cell title="这笔钱花给了谁" value="新增" is-link></cell>
+        <cell title="这笔钱花给了谁" v-show="isPay" value="新增" is-link></cell>
+        <cell title="这笔钱谁赚的" v-show="!isPay" value="新增" is-link></cell>
       </group>
       <div>
         <box class="cost-people">
@@ -71,15 +81,29 @@
 
 <script>
 import { XHeader,ButtonTab, ButtonTabItem,Icon,Group,XInput,XButton,Box,Cell} from 'vux'
-
 export default{
   data(){
     return{
-      buttonTabIndex:0
+      buttonTabIndex:0,
+      isPay:true
     }
   },
   methods:{
-
+    back(){
+      this.$router.push('/home');
+    },
+    payClick(){
+      this.isPay=true;
+    },
+    incomeClick(){
+      this.isPay=false;
+    },
+    payMore(){
+      this.$router.push('/paymore')
+    },
+    incomeMore(){
+      this.$router.push('/incomemore')
+    }
   },
   components:{
     XHeader,
@@ -91,6 +115,16 @@ export default{
     Box,
     XButton,
     Cell
+  },
+  created:function () {
+    this.paySelectedItem=this.$store.state.paySelectedItem;
+    this.incomeSelectedItem=this.$store.state.incomeSelectedItem;
+    this.isPay=this.$store.state.isPay;
+    this.buttonTabIndex=this.$store.state.buttonTabIndex
+  },
+  mounted:function () {
+    this.paySelectedItem=this.$store.state.paySelectedItem;
+    this.incomeSelectedItem=this.$store.state.incomeSelectedItem;
   }
 }
 </script>

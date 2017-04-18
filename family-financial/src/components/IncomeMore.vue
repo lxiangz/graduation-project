@@ -1,0 +1,58 @@
+<template>
+  <div class="income-more">
+    <x-header :left-options="{backText: '',preventGoBack:true}"  @on-click-back="back" >类别</x-header>
+    <scroller  lock-x>
+      <div>
+        <p style="border-bottom:1px solid #DCDCDC;padding:10px 0 10px 15px;color:	#696969;font-size:14px;" v-for="(income,$index) of incomeTable" :key="income.id"><a href="javascript:;" v-on:click="selectDetails($index)">{{income}}</a></p>
+      </div>
+    </scroller>
+  </div>
+</template>
+
+<script>
+import {XHeader,Scroller} from 'vux'
+export default{
+  data(){
+    return{
+      incomeTable:[
+        '股票',
+        '基金',
+        '分红',
+        '利息',
+        '租金',
+        '应收款',
+        '销售款',
+        '报销款',
+        '漏记款',
+        '生活费',
+        '公积金',
+        '退款返款',
+        '赔付款',
+        '余额宝',
+        '营业收入',
+        '工程款',
+        '其他'
+      ]
+
+    }
+  },
+  methods:{
+    back(){
+      this.$router.push('/record');
+      this.$store.commit('changeIncomePage');
+    },
+     selectDetails($index){
+       this.$store.commit('changeIncomeSelected',this.incomeTable[$index]);
+       this.$router.push('/record');
+     }
+  },
+  components:{
+    XHeader,
+    Scroller,
+  }
+}
+</script>
+
+ <style>
+
+ </style>

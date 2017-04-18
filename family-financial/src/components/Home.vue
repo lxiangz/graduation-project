@@ -12,10 +12,10 @@
           </flexbox-item>
           <flexbox-item :span="1/9"><div><img width="25px" style="padding:10px 0 0 10px;" src="../assets/img/icon_nav_cell.png"/></div></flexbox-item>
         </flexbox>
-        <group :gutter="0" style="background-image:url('../assets/img/greenbg.jpg')" >
-          <cell title="本月收入" value="0.00" is-link="true"></cell>
-          <cell title="本月支出" value="0.00" is-link="true"></cell>
-          <cell title="预算余额" value="未设预算，点此设置" is-link="true"></cell>
+        <group gutter="0" style="background-image:url('../assets/img/greenbg.jpg')" >
+          <cell title="本月收入" value="0.00" is-link></cell>
+          <cell title="本月支出" value="0.00" is-link></cell>
+          <cell title="预算余额" value="未设预算，点此设置" is-link></cell>
         </group>
       </div>
     </flexbox-item>
@@ -28,29 +28,29 @@
     </flexbox-item>
     <flexbox-item>
       <div class="flex-demo">
-        <group :gutter="0">
-        <cell title="今天" inline-desc="还没有记过账"  value="0.00" is-link="true">
+        <group gutter="0">
+        <cell title="今天" inline-desc="还没有记过账"  value="0.00" is-link>
           <img slot="icon" width="35px" style="display:block; margin-right:5px;" src="../assets/img/icon_nav_msg.png" />
           <div slot="default">
             <span style="color:red">0.00</span><br/>
             <span style="color:green">0.00</span>
           </div>
         </cell>
-        <cell title="本周" inline-desc="04月10号-04月16号"  value="0.00" is-link="true">
+        <cell title="本周" inline-desc="04月10号-04月16号"  value="0.00" is-link>
           <img slot="icon" width="35px" style="display:block; margin-right:5px;" src="../assets/img/icon_nav_button.png" />
           <div slot="default">
             <span style="color:red">0.00</span><br/>
             <span style="color:green">0.00</span>
           </div>
         </cell>
-        <cell title="本月" inline-desc="04月01号-04月30号"  value="0.00" is-link="true">
+        <cell title="本月" inline-desc="04月01号-04月30号"  value="0.00" is-link>
           <img slot="icon" width="35px" style="display:block; margin-right:5px;" src="../assets/img/icon_nav_msg.png" />
           <div slot="default">
             <span style="color:red">0.00</span><br/>
             <span style="color:green">0.00</span>
           </div>
         </cell>
-        <cell title="社区" inline-desc="跟大神一起学记账"  is-link="true">
+        <cell title="社区" inline-desc="跟大神一起学记账"  is-link>
           <img slot="icon" width="35px" style="display:block; margin-right:5px;" src="../assets/img/icon_nav_button.png" />
           <div slot="default">
             <span style="color:orange">福利活动</span>
@@ -122,7 +122,7 @@ export default {
 }
 .upper{
   padding-bottom:20px;
-  background-image:url('../assets/img/greenbg.jpg')
+  background-image:url("../assets/img/greenbg.jpg")
 
 }
 .flex-demo {

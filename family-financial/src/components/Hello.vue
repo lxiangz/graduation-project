@@ -46,6 +46,12 @@ export default {
     jump(){
       this.$router.push('/home');
     }
+  },
+  created:function () {
+    var self=this;
+    setTimeout(function(){
+      self.$router.push('/home');
+    },3000);
   }
 
 }
