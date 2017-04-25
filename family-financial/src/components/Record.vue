@@ -36,7 +36,7 @@
         <x-button style="margin-left:39px;"  mini plain type="primary" @click.native="incomeMore" >更多&nbsp;></x-button>
       </box>
       <group gutter="0">
-        <x-input style="padding:5px 15px"  placeholder="...">
+        <x-input style="padding:5px 15px"  placeholder="..." :show-clear=false>
           <span style="color:black" slot="label">备注：</span>
           <box slot="right" style="border-left:1px solid;padding-left:10px;">
             <x-icon type="ios-search-strong" size="25"></x-icon>
@@ -129,7 +129,7 @@ export default{
 }
 </script>
 
-<style>
+<style scoped>
   #record{
   height:100%;
 }

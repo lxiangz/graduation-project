@@ -52,7 +52,7 @@ export default{
       var pay_menus=document.getElementById('left').getElementsByTagName('p');
       for(var i=0;i<9;i++)
       {
-        if(i!=$index)
+        if(i!==$index)
         {
           pay_menus[i].setAttribute('class','pay-menu');
         }
@@ -96,7 +96,7 @@ export default{
 
 </script>
 
-<style>
+<style scoped>
 .pay-menus{
   float:left;
   height:621px;

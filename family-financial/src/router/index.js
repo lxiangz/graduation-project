@@ -6,6 +6,7 @@ import home from '../components/Home.vue'
 import record from '../components/Record.vue'
 import paymore from '../components/PayMore.vue'
 import incomemore from '../components/IncomeMore.vue'
+import budget from '../components/Budget.vue'
 
 
 Vue.use(Router)
@@ -38,6 +39,10 @@ export default [
       {
         path:'/incomemore',
         component:incomemore
+      },
+      {
+        path:'/budget',
+        component:budget
       }
     ]
   }

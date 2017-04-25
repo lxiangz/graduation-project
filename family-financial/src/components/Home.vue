@@ -12,10 +12,10 @@
           </flexbox-item>
           <flexbox-item :span="1/9"><div><img width="25px" style="padding:10px 0 0 10px;" src="../assets/img/icon_nav_cell.png"/></div></flexbox-item>
         </flexbox>
-        <group gutter="0" style="background-image:url('../assets/img/greenbg.jpg')" >
+        <group gutter="0" style="background-image:url('../assets/img/green_bg.jpg')" >
           <cell title="本月收入" value="0.00" is-link></cell>
           <cell title="本月支出" value="0.00" is-link></cell>
-          <cell title="预算余额" value="未设预算，点此设置" is-link></cell>
+          <cell title="预算余额" value="未设预算，点此设置" is-link :link="{path:'/budget'}" ></cell>
         </group>
       </div>
     </flexbox-item>
@@ -82,12 +82,16 @@
           <span slot="label">理财</span>
       </tabbar-item>
     </tabbar>
+    <div class="" style="position:absolute;top:0px;height:100%:width:50%;border:1px solid;">
+      5555
+    </div>
   </div>
 </template>
 
 <script>
 
 import { Flexbox, FlexboxItem,Cell,Group,XButton,Box,Tabbar, TabbarItem,Badge} from 'vux'
+import $ from 'jquery'
 
 export default {
   name: 'hello',
@@ -122,7 +126,7 @@ export default {
 }
 .upper{
   padding-bottom:20px;
-  background-image:url("../assets/img/greenbg.jpg")
+  background-image:url("../assets/img/green_bg.jpg")
 
 }
 .flex-demo {

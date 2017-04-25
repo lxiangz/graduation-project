@@ -57,7 +57,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   .jump{
   position:absolute;
   z-index:2;
