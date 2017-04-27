@@ -14,7 +14,6 @@
 </template>
 
 <script>
- import Vue from 'vue'
 import { Swiper, XButton, SwiperItem } from 'vux'
 
 const imgList = [

@@ -9,6 +9,7 @@ import incomemore from '../components/IncomeMore.vue'
 import budget from '../components/Budget.vue'
 
 
+
 Vue.use(Router)
 
 export default [

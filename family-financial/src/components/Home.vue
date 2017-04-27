@@ -91,19 +91,31 @@
 <script>
 
 import { Flexbox, FlexboxItem,Cell,Group,XButton,Box,Tabbar, TabbarItem,Badge} from 'vux'
-import $ from 'jquery'
+import axios from 'axios'
+const instance = axios.create({
+  baseURL:"http://zhuanzhuan.name/",
+});
 
 export default {
   name: 'hello',
   data () {
     return {
-
     }
   },
   methods:{
     record(){
       this.$router.push('/record');
     }
+  },
+  mounted:function () {
+    instance.get('BYSJ2017-0.0.1-SNAPSHOT/login?ID=12345')
+      .then(function(response){
+        console.log(response);
+        console.log(response.data);
+      })
+      .catch(function(err){
+        console.log(err);
+      });
   },
   components: {
     Flexbox,
@@ -119,7 +131,6 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .weui-cell{
   padding:10px 30px;
