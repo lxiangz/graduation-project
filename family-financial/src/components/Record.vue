@@ -56,8 +56,8 @@
     <div class="blank">&nbsp;</div>
     <div class="cost">
       <group gutter="0">
-        <cell title="这笔钱花给了谁" v-show="isPay" value="新增" is-link></cell>
-        <cell title="这笔钱谁赚的" v-show="!isPay" value="新增" is-link></cell>
+        <cell title="这笔钱花给了谁" v-show="isPay" value="新增" is-link :link="{path:'/budget'}"></cell>
+        <cell title="这笔钱谁赚的" v-show="!isPay" value="新增" is-link :link="{path:'/budget'}"></cell>
       </group>
       <div>
         <box class="cost-people">
@@ -79,7 +79,7 @@
   </div>
 </template>
 
-<script>
+<script type="es6">
 import { XHeader,ButtonTab, ButtonTabItem,Icon,Group,XInput,XButton,Box,Cell} from 'vux'
 export default{
   data(){
@@ -99,6 +99,7 @@ export default{
       this.isPay=false;
     },
     payMore(){
+      console.log("sss");
       this.$router.push('/paymore')
     },
     incomeMore(){

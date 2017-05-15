@@ -1,5 +1,5 @@
 <template>
-  <div class="hello">
+  <div id="hello">
     <flexbox orient="vertical" :gutter="0">
     <flexbox-item>
       <div class="flex-demo upper">
@@ -12,9 +12,9 @@
           </flexbox-item>
           <flexbox-item :span="1/9"><div><img width="25px" style="padding:10px 0 0 10px;" src="../assets/img/icon_nav_cell.png"/></div></flexbox-item>
         </flexbox>
-        <group gutter="0" style="background-image:url('../assets/img/green_bg.jpg')" >
+        <group gutter="0" style="" >
           <cell title="本月收入" value="0.00" is-link></cell>
-          <cell title="本月支出" value="0.00" is-link></cell>
+          <cell title="本月支出" value="0.00" is-link ></cell>
           <cell title="预算余额" value="未设预算，点此设置" is-link :link="{path:'/budget'}" ></cell>
         </group>
       </div>
@@ -22,7 +22,7 @@
     <flexbox-item>
       <div class="flex-demo record ">
         <box gap="1px 20px">
-          <x-button type="primary" action-type="button" @click.native="record">记一笔</x-button>
+          <x-button type="primary" action-type="button" @click.native="list">记一笔</x-button>
         </box>
       </div>
     </flexbox-item>
@@ -61,7 +61,7 @@
     </flexbox-item>
     </flexbox>
     <tabbar>
-      <tabbar-item>
+      <tabbar-item @click.native="myPrimary">
         <div slot="icon"><x-icon type="ios-arrow-left" size="25"></x-icon></div>
           <span slot="label">我的</span>
       </tabbar-item>
@@ -82,40 +82,28 @@
           <span slot="label">理财</span>
       </tabbar-item>
     </tabbar>
-    <div class="" style="position:absolute;top:0px;height:100%:width:50%;border:1px solid;">
-      5555
-    </div>
   </div>
 </template>
 
-<script>
-
+<script type="es6">
 import { Flexbox, FlexboxItem,Cell,Group,XButton,Box,Tabbar, TabbarItem,Badge} from 'vux'
-import axios from 'axios'
+/*import axios from 'axios'
 const instance = axios.create({
   baseURL:"http://zhuanzhuan.name/",
-});
+});*/
 
 export default {
-  name: 'hello',
-  data () {
-    return {
-    }
+  data(){
+    return{}
   },
   methods:{
-    record(){
+    list(){
+      console.log("sd");
       this.$router.push('/record');
+    },
+    myPrimary(){
+     this.$router.push("/login");
     }
-  },
-  mounted:function () {
-    instance.get('BYSJ2017-0.0.1-SNAPSHOT/login?ID=12345')
-      .then(function(response){
-        console.log(response);
-        console.log(response.data);
-      })
-      .catch(function(err){
-        console.log(err);
-      });
   },
   components: {
     Flexbox,
@@ -127,7 +115,18 @@ export default {
     Tabbar,
     TabbarItem,
     Badge
+  },
+  mounted:function(){
+    /*instance.get('BYSJ2017-0.0.1-SNAPSHOT/login?ID=12345')
+      .then(function(response){
+        console.log(response);
+        console.log(response.data);
+      })
+      .catch(function(err){
+        console.log(err);
+      });*/
   }
+
 }
 </script>
 
@@ -136,8 +135,8 @@ export default {
   padding:10px 30px;
 }
 .upper{
-  padding-bottom:20px;
-  background-image:url("../assets/img/green_bg.jpg")
+  /* padding-bottom:20px;
+ background-image:url("../assets/img/green_bg.jpg")*/
 
 }
 .flex-demo {
@@ -149,5 +148,48 @@ export default {
 }
 .record{
   padding:10px 0;
+}
+#primary{
+/*
+animation:right 1s;
+ animation-fill-mode: forwards;*/
+
+ position:absolute;
+ top:0px;
+ height:100%;
+ width:100%;
+  z-index:5;
+}
+#primary div{
+ float:left;
+}
+#primary #left{
+  background-color:white;
+  position: absolute;
+  left:-375px;
+ width:70%;
+ height:92%;
+}
+#primary #right{
+  position: absolute;
+ left:261px;
+width:30%;
+ height:92%;
+  background-color: white;
+  opacity: 0.8;
+  display: none;
+}
+/* div左右滑动动画 */
+/* 右滑 */
+@keyframes right
+{
+from {left:-375px;}
+to {left:0px;}
+}
+/* 左滑 */
+@keyframes left
+{
+from {left:0px;}
+to {left:-375px;}
 }
 </style>

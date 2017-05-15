@@ -12,7 +12,7 @@
   </div>
 </template>
 
-<script>
+<script type="es6">
  import {XHeader,Flexbox, FlexboxItem,XButton,Scroller} from 'vux'
 
 const foods=[ '夜宵', '餐饮其他', '零食', '油盐酱醋'];

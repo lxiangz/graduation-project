@@ -9,7 +9,7 @@
   </div>
 </template>
 
-<script>
+<script type="es6">
 import {XHeader,Scroller} from 'vux'
 export default{
   data(){

@@ -7,6 +7,12 @@ import record from '../components/Record.vue'
 import paymore from '../components/PayMore.vue'
 import incomemore from '../components/IncomeMore.vue'
 import budget from '../components/Budget.vue'
+import login from '../components/Login.vue'
+import register from '../components/Register.vue'
+import lookPSD from '../components/LookPSD.vue'
+import setnewPSD from '../components/SetNewPSD.vue'
+import personal from '../components/Personal.vue'
+
 
 
 
@@ -44,6 +50,26 @@ export default [
       {
         path:'/budget',
         component:budget
+      },
+      {
+        path:'/login',
+        component:login
+      },
+      {
+        path:'/register',
+        component:register
+      },
+      {
+        path:'/lookPSD',
+        component:lookPSD
+      },
+      {
+        path:'/setnewPSD',
+        component:setnewPSD
+      },
+      {
+        path:'/personal',
+        component:personal
       }
     ]
   }

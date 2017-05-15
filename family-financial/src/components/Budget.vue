@@ -48,7 +48,7 @@
       </div>
     </div>
 </template>
-<script>
+<script type="es6">
 import {XHeader,Group,Cell,Icon,XInput} from 'vux'
 
 export default{

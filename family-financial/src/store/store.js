@@ -3,7 +3,10 @@
  */
 import Vue from 'vue'
 import Vuex from 'vuex'
-
+import axios from 'axios'
+const instance = axios.create({
+  baseURL:"http://zhuanzhuan.name/",
+});
 
 Vue.use(Vuex)
 
@@ -14,7 +17,15 @@ export default new Vuex.Store({
     paySelectedItem:'...',
     incomeSelectedItem:'...',
     isPay:true,
-    buttonTabIndex:0
+    buttonTabIndex:0,
+    testCode:"",//验证码
+    cellphone:"",//登陆成功的账号手机号
+    phoneIsExist:false,//手机账号是否存在
+    isRegister:false,//是否注册成功
+    isLogin:false,//是否登陆成功
+    isSetNewPsd:false,//是否设置新密码成功
+
+
   },
   //Actions 即是定义提交触发更改信息的描述
   actions: {
@@ -38,6 +49,42 @@ export default new Vuex.Store({
     changeIncomePage(state){
       state.buttonTabIndex=1;
       state.isPay=false;
+    },
+    //请求验证码数据
+    getTestCode(state,text){
+      instance.post(
+        'BYSJ2017-0.0.1-SNAPSHOT/login',{
+        cellphone:text
+      })
+        .then(function(response){
+          console.log(response);
+          console.log(response.data);
+        })
+        .catch(function(err){
+          console.log(err);
+        });
+    },
+    //验证账号是否存在
+    confirmPhone(state,text){
+
+    },
+
+    //注册
+    register(state,text1,text2){
+
+    },
+    //登陆
+    login(state,text,text2){
+      if(text2==""){
+        this.cellphone=text;
+      }else{
+        //请求密码比较密码
+      }
+
+    },
+    //设置新密码
+    setNewPsd(state,text){
+
     }
   },
   //Getters 允许组件从 Store 中获取数据

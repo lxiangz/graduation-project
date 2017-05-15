@@ -1,7 +1,7 @@
 <template>
   <div id="add-member"></div>
 </template>
-<script>
+<script type="es6">
  import {} from 'vux'
 export default{
   data(){
