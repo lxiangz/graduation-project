@@ -14,7 +14,7 @@
       <span slot="default">{{toastText}}</span>
     </toast>
     <!--显示提示信息-->
-    <toast v-model="textShow" width="9.5em"  position="top">
+    <toast v-model="textShow" type="default" width="9.5em"  position="top">
       <span slot="default">{{text}}</span>
     </toast>
     <box gap="15px 20px" >
@@ -39,6 +39,7 @@ export default{
   },
   methods:{
     confirm(){
+      var _this=this;
       //验证均不为空，验证密码格式，验证是否相等
       if(this.newPSD==""){
         this.toastShow=true;
@@ -56,19 +57,32 @@ export default{
             //密码加密
             var md5Psd=hex_md5(this.newPSD);
             //发送请求
-            this.$store.commit("setNewPsd",state,md5Psd)
-            //是否设置成功
-            if(this.$store.state.isSetNewPsd){
-              //提示修改成功
-              this.textShow=true;
-              this.text="密码修改成功，转到登陆页面"
-              //转到登陆页面
-              var _this=this;
-              setTimeout(function(){
-                _this.$router.push("/login");
-              },3000);
-            }
-
+            _this.$instance.post(
+              'setNewPSD',{
+                phone:_this.$store.state.cellphone,
+                password:md5Psd
+              })
+              .then(function(response){
+                console.log(response);
+                console.log(response.data);
+                if(response.status==200){
+                  var res=response.data;
+                  if(res.code==200){
+                    _this.textShow=true;
+                    _this.text="密码修改成功，转到登陆页面"
+                    //转到登陆页面
+                    setTimeout(function(){
+                      _this.$router.push("/login");
+                    },3000);
+                  } else{
+                    _this.toastShow=true;
+                    _this.toastText="密码修改失败！"
+                  }
+                }
+              })
+              .catch(function(err){
+                console.log(err);
+              });
           }else{
             this.toastShow=true;
             this.toastText="两者不一致"

@@ -69,7 +69,7 @@
         <img slot="icon" src="../assets/img/icon_nav_button.png">
           <span slot="label">明细</span>
       </tabbar-item>
-      <tabbar-item show-dot>
+      <tabbar-item show-dot @click.native="personal" >
         <img slot="icon" src="../assets/img/icon_nav_msg.png">
           <span slot="label">账户</span>
       </tabbar-item>
@@ -103,7 +103,28 @@ export default {
     },
     myPrimary(){
      this.$router.push("/login");
+    },
+    personal(){
+      this.$router.push("/personal");
     }
+  },
+  mounted:function(){
+    this.$instance.get('loginState').then(function(response){
+      console.log("sss");
+      console.log(response);
+      console.log(response.data);
+      var res=response.data;
+      if(response.status==200){
+        if(res.code==200){
+          alert(res.message);
+        }else{
+          alert("未登录");
+        }
+      }
+    })
+      .catch(function(err){
+        console.log(err);
+      });
   },
   components: {
     Flexbox,
@@ -115,18 +136,7 @@ export default {
     Tabbar,
     TabbarItem,
     Badge
-  },
-  mounted:function(){
-    /*instance.get('BYSJ2017-0.0.1-SNAPSHOT/login?ID=12345')
-      .then(function(response){
-        console.log(response);
-        console.log(response.data);
-      })
-      .catch(function(err){
-        console.log(err);
-      });*/
   }
-
 }
 </script>
 

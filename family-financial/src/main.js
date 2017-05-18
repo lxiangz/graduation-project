@@ -5,10 +5,25 @@ import FastClick from 'fastclick'
 import VueRouter from 'vue-router'
 import App from './App'
 import routes from './router/index'
-
-
+import axios from 'axios';
 Vue.use(VueRouter)
 
+//ajax请求设置
+Vue.prototype.$instance = axios.create({
+  baseURL: "http://172.16.97.33:8080/user/",
+  transformRequest: [function (data) {
+    // Do whatever you want to transform the data
+    let ret = ''
+    for (let it in data) {
+      ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+    }
+    return ret
+  }],
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  },
+ withCredentials:true,
+});
 const router = new VueRouter({
    routes
 })

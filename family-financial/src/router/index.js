@@ -12,6 +12,10 @@ import register from '../components/Register.vue'
 import lookPSD from '../components/LookPSD.vue'
 import setnewPSD from '../components/SetNewPSD.vue'
 import personal from '../components/Personal.vue'
+import addmember from '../components/AddMember.vue'
+import changename from '../components/ChangeName.vue'
+import changetel from '../components/ChangeTel.vue'
+import selecthead from '../components/SelectHead.vue'
 
 
 
@@ -70,6 +74,22 @@ export default [
       {
         path:'/personal',
         component:personal
+      },
+      {
+        path:'/addmember',
+        component:addmember
+      },
+      {
+        path:'/changename',
+        component:changename
+      },
+      {
+        path:'/changetel',
+        component:changetel
+      },
+      {
+        path:'/selecthead',
+        component:selecthead
       }
     ]
   }

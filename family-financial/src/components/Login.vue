@@ -32,7 +32,7 @@
     </group>
 
     <!--显示警告信息-->
-    <toast v-model="toastShow" width="9.5em" type="warn"  position="top">
+    <toast v-model="toastShow" width="9.5em" :type="toastType"  position="top">
       <span slot="default">{{toastText}}</span>
     </toast>
 
@@ -52,14 +52,15 @@
   import {XHeader,XButton,XInput,Group,Box,Toast} from 'vux'
   export default{
     data(){
-      return{
-        cellphone:"",
-        password:"",
-        toastShow:false,
-        toastText:""
+      return {
+        cellphone: "",
+        password: "",
+        toastShow: false,
+        toastText: "",
+        toastType: "warn"
       }
     },
-    methods:{
+    methods: {
       register(){
         this.$router.push('/register')
       },
@@ -68,47 +69,91 @@
       },
       //登陆
       login(){
+        var _this = this;
         //验证手机号不为空，格式正确且该账号存在
-        if(this.cellphone===""){
-          this.toastShow=true;
-          this.toastText="手机号不能为空";
-        }else if(this.password===""){
-          this.toastShow=true;
-          this.toastText="密码不能为空";
-        } else{
+        if (this.cellphone === "") {
+          this.toastShow = true;
+          this.toastText = "手机号不能为空";
+          this.toastType = "warn";
+        } else if (this.password === "") {
+          this.toastShow = true;
+          this.toastText = "密码不能为空";
+          this.toastType = "warn";
+        } else {
           //验证手机号码格式是否正确
           var tel = /^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|4|5|6|7|8|9])\d{8}$/;
           var re = new RegExp(tel);
-          if(re.test(this.cellphone)){
+          if (re.test(this.cellphone)) {
             //验证该手机账号是否注册过
-            this.$store.commit('confirmPhone',this.cellphone);
-            if(this.$store.state.phoneIsExist==false){
-              this.toastShow=true;
-              this.toastText="该手机号未注册过";
-            }else{
-              //请求数据，获得加密后的密码并比较
-              var md5Psd=hex_md5(this.password);
-              this.$store.commit("login",this.cellphone,md5Psd);
-              // 登陆成功,
-              if(this.$store.state.isLogin){
-                this.$router.push("/home")
+            _this.$instance.post(
+              'testPhone', {
+                phone: this.cellphone
+              })
+              .then(function (response) {
+                console.log(response);
+                if (response.status == 200) {
+                  var res = response.data;
+                  if (res.code == 404) {
+                    _this.toastShow = true;
+                    _this.toastText = "该手机号未注册过";
+                    _this.toastType = "warn";
+                  } else {
+                    var md5Psd=hex_md5(_this.password);
+                    //请求数据，获得加密后的密码并比较
+                    _this.$instance.post(
+                      'login', {
+                        phone: _this.cellphone,
+                        password:md5Psd
+                      })
+                      .then(function (response) {
+                        console.log(response);
+                        if (response.status == 200) {
+                          var res = response.data;
+                          if (res.code == 404) {
+                            //state.isLogin=false;
+                            _this.toastShow = true;
+                            _this.toastText = res.message;
+                            _this.toastType = "warn";
+                          } else {
+                            // 登陆成功,
+                            _this.toastShow = true;
+                            _this.toastText = "登陆成功，将直接转到主页";
+                            _this.toastType = "default";
+                            setTimeout(function () {
+                              _this.$router.push("/home")
+                            }, 2000);
+                          }
+                        }
+                      }).
+                      catch(function (err) {
+                        console.log(err);
+                      });
+                  }
+                }
               }
-            }
-          }else{
-            this.toastShow=true;
-            this.toastText="手机号格式错误";
+            )
+              .
+              catch(function (err) {
+                console.log(err);
+              });
+          }
+          else {
+            this.toastShow = true;
+            this.toastText = "手机号格式错误";
+            this.toastType = "warn";
           }
         }
-
-
       }
     },
-    mounted:function(){
+    mounted: function () {
       //第一个输入框取得焦点
-      var inputs=document.getElementById('login').getElementsByTagName('input');
+      var inputs = document.getElementById('login').getElementsByTagName('input');
       inputs[0].focus();
+
+      //判断是否已经有账号登陆
+      //console.log(this.$store.state.cellphone);
     },
-    components:{
+    components: {
       XHeader,
       XButton,
       XInput,

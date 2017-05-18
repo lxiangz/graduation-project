@@ -18,7 +18,7 @@
       <span slot="default">{{toastText}}</span>
     </toast>
     <!--显示提示信息-->
-    <toast v-model="textShow" width="20em" type="text" :time="5000"  position="default">
+    <toast v-model="textShow" width="20em" :type="textType" :time="5000"  position="default">
       <span slot="default">{{text}}</span>
     </toast>
 
@@ -29,6 +29,7 @@
 </template>
 <script type="es6">
   import hex_md5 from '../assets/js/md5.js'
+  const code="";
   import {Group,XInput,XHeader,XImg,XButton,Box,Toast } from 'vux'
   export default{
     data(){
@@ -41,7 +42,8 @@
         isGetCode: false,
         getCodeText: "获取验证码",
         textShow: false,
-        text: ""
+        text: "",
+        textType:"text"
 
       }
     },
@@ -53,7 +55,6 @@
         var _this = this;
         //每一秒改变按钮text
         var setText = window.setInterval(function () {
-          console.log(_this.getCodeText);
           _this.getCodeText = (time--).toString() + "秒后可重新发送";
           //去掉定时器的方法
           if (time == -1) {
@@ -65,6 +66,7 @@
       },
       getCode(){
         //验证是否为空
+        var _this=this;
         if (this.cellphone === "") {
           this.toastShow = true;
           this.toastText = "手机号不能为空";
@@ -74,16 +76,49 @@
           var re = new RegExp(tel);
           if (re.test(this.cellphone)) {
             //验证手机号是否已注册过
-            this.$store.commit('confirmPhone',this.cellphone);
-            if(this.$store.state.phoneIsExist){
-              this.toastShow=true;
-              this.toastText="该手机号已注册过";
-            }else{
-              //一分钟后可再次点击获取验证码按钮
-              this.setClickAgain();
-              //获得验证码
-              this.$store.commit('getTestCode', this.cellphone);
-            }
+            _this.$instance.post(
+              'testPhone',{
+                phone:_this.cellphone
+              })
+              .then(function(response){
+                console.log(response);
+                if(response.status==200){
+                  var res=response.data;
+                  if(res.code==404){
+                    //state.phoneIsExist=false;
+                    //一分钟后可再次点击获取验证码按钮
+                    _this.setClickAgain();
+                    //获得验证码
+                    _this.$instance.post(
+                      'sendSMS',{
+                        "phone":_this.cellphone
+                      })
+                      .then(function(response){
+                        console.log(response);
+                        if(response.status==200){
+                          var res=response.data;
+                          if(res.code===200){
+                              _this.code=res.message;
+                          }else if(res.code===400){
+                            _this.toastShow=true;
+                            _this.toastText="验证码发送失败！";
+                          }
+                        }
+                      })
+                      .catch(function(err){
+                        console.log(err);
+                      });
+                   // _this.$store.commit('getTestCode',_this.cellphone);
+                  }else{
+                    //state.phoneIsExist=true;
+                    _this.toastShow=true;
+                    _this.toastText="该手机号已注册过";
+                  }
+                }
+              })
+              .catch(function(err){
+                console.log(err);
+              });
           } else {
             this.toastShow = true;
             this.toastText = "手机号格式错误！";
@@ -92,13 +127,14 @@
       },
       //完成注册，注册成功同时登陆
       completed(){
+        var _this=this;
         //验证验证码不为空且正确
         if(this.testCode==""){
           this.toastShow = true;
           this.toastText = "验证码不能为空！";
         }else{
           //验证验证码是否正确
-           if(this.testCode==this.$store.state.testCode){
+          if(this.testCode==this.code){
              //验证码正确时验证密码
              if(this.password==""){
                this.toastShow = true;
@@ -111,13 +147,29 @@
                  //密码加密
                  var md5Psd=hex_md5(this.password);
                  //发送请求
-                 this.$store.commit("register",state,this.cellphone,md5Psd);
-                 //注册成功，直接登陆
-                 if(this.$store.state.isRegister){
-                   this.$store.commit("login",state,this.cellphone,"");
-                   //转到主页
-                   this.$router.push("/home");
-                 }
+                 // 注册成功，直接登陆
+                 _this.$instance.post(
+                   'register',{phone:this.cellphone,password:md5Psd})
+                   .then(function(response){
+                     if(response.status==200){
+                       var res=response.data;
+                       if(res.code==404){
+                         _this.toastShow = true;
+                         _this.toastText = "注册失败！";
+                       }else{
+                         _this.textShow = true;
+                         _this.text = "注册成功，将转到登陆页面！";
+                         _this.textType="default";
+                         setTimeout(function(){
+                           //转到主页
+                           _this.$router.push("/login");
+                         },3000)
+                       }
+                     }
+                   })
+                   .catch(function(err){
+                     console.log(err);
+                   });
                }else{
                  this.toastShow = true;
                  this.toastText = "密码格式错误！";
@@ -140,6 +192,7 @@
       inputs[2].onfocus = function () {;
         _this.textShow = true;
         _this.text = "长度在6-16位,由字母、数字、特殊符号组成";
+        _this.textType="text";
       };
     },
     components: {

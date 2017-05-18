@@ -23,6 +23,7 @@
 </template>
 
 <script type="es6">
+  const code="";
   import {XHeader,Group,XInput,XButton,Box,Toast} from 'vux'
 export default{
   data(){
@@ -43,7 +44,6 @@ export default{
       var _this=this;
       //每一秒改变按钮text
       var setText = window.setInterval(function () {
-        console.log(_this.getCodeText);
         _this.getCodeText=(time--).toString()+"秒后可重新发送";
         //去掉定时器的方法
         if(time==-1){
@@ -55,6 +55,7 @@ export default{
 
     },
     getCode(){
+      var _this=this;
       //验证是否为空
       if(this.cellphone===""){
         this.toastShow=true;
@@ -65,16 +66,49 @@ export default{
         var re = new RegExp(tel);
         if (re.test(this.cellphone)) {
           //验证该手机账号是否存在过
-          this.$store.commit('confirmPhone',this.cellphone);
-          if(this.$store.state.phoneIsExist==false){
-            this.toastShow=true;
-            this.toastText="该手机号未注册过";
-          }else{
-            //一分钟后可再次点击获取验证码按钮
-            this.setClickAgain();
-            //获得验证码
-            this.$store.commit('getTestCode',this.cellphone);
-          }
+         // this.$store.commit('confirmPhone',this.cellphone);
+          _this.$instance.post(
+            'testPhone',{
+              phone:_this.cellphone
+            })
+            .then(function(response){
+              console.log(response);
+              if(response.status==200){
+                var res=response.data;
+                if(res.code==404){
+                  _this.toastShow=true;
+                  _this.toastText="该手机号未注册过";
+                }else{
+                  //一分钟后可再次点击获取验证码按钮
+                  _this.setClickAgain();
+                  //获得验证码
+                  //this.$store.commit('getTestCode',this.cellphone);
+                  _this.$instance.post(
+                    'sendSMS',{
+                      "phone":_this.cellphone
+                    })
+                    .then(function(response){
+                      console.log(response);
+                      if(response.status==200){
+                        var res=response.data;
+                        if(res.code===200){
+                          _this.code=res.message;
+                        }else if(res.code===400){
+                          _this.toastShow=true;
+                          _this.toastText="验证码发送失败！";
+                        }
+                      }
+                    })
+                    .catch(function(err){
+                      console.log(err);
+                    });
+                }
+              }
+
+            })
+            .catch(function(err){
+              console.log(err);
+            });
         }else{
           this.toastShow=true;
           this.toastText="手机号格式错误！";
@@ -87,10 +121,8 @@ export default{
         this.toastShow=true;
         this.toastText="验证码不能为空！";
       }else{
-        if(this.testCode==this.$store.state.testCode){
-          //设置手机号
-          this.$store.commit("login",state,this.cellphone,"");
-          //转到设置新密码页面
+        if(this.testCode==this.code){
+          this.$store.commit("setCellPhone",this.cellphone);
           this.$router.push('/setnewPSD');
         }else{
           this.toastShow=true;
@@ -98,6 +130,11 @@ export default{
         }
       }
     }
+  },
+  mounted:function(){
+    //第一个输入框取得焦点
+    var inputs = document.getElementById('look_PSD').getElementsByTagName('input');
+    inputs[0].focus();
   },
   components:{
     XHeader,
