@@ -14,6 +14,27 @@
     <box gap="15px 20px">
       <x-button type="primary" action-type="button" @click.native="confirm">确定</x-button>
     </box>
+    <div class="blank">&nbsp;</div>
+    <group gutter="0">
+      <cell title="已关联账号："></cell>
+    </group>
+    <!--显示已关联账号信息-->
+    <div>
+      <box class="related-account">
+        <div class="little-container">
+          <a>
+            <img  src="../assets/img/icon_nav_msg.png" />
+            <span>家庭公共</span>
+          </a>
+        </div>
+        <div class="little-container">
+          <a>
+            <img width="56px" src="../assets/logo.png" />
+            <span>好奇宝宝</span>
+          </a>
+        </div>
+      </box>
+    </div>
   </div>
 </template>
 <script type="es6">
@@ -154,6 +175,28 @@ export default{
 }
 </script>
 <style scoped>
+  .blank{
+    height:13px;
+    background-color:	#DCDCDC;
+  }
+  /*关联账号*/
+  .related-account{
+    margin:10px 0 0 10px;
+  }
+  .related-account .little-container{
+    float:left;
+    margin:0 5px;
+  }
+  .related-account .little-container img{
+    display:block;
+    border-radius:50%;
+    border:1px solid #DCDCDC;
+  }
+  .related-account .little-container span{
+    font-size:13px;
+    color:gray;
+    display:block;
+  }
 /*  img{
     border-radius:50%;
     border:1px solid #DCDCDC;

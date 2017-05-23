@@ -16,9 +16,10 @@
       // 从相册中选择图片
       plus.gallery.pick( function(path){
         console.log(path);
-        plus.gallery.save( "../assets/img", function () {
+        plus.gallery.save(path , function () {
          console.log( "保存图片到相册成功" );
         } ,function(e){
+          console.log(e.message);
           console.log( e.code);
           console.log( "保存图片到相册失败" );
         });

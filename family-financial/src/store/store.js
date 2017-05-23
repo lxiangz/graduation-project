@@ -30,6 +30,7 @@ export default new Vuex.Store({
     incomeSelectedItem:'...',
     isPay:true,
     buttonTabIndex:0,
+    isLoginSuccess:false,//是否已登陆
     testCode:"",//验证码
     cellphone:"",//登陆成功的账号手机号
     phoneIsExist:null,//手机账号是否存在
@@ -39,6 +40,7 @@ export default new Vuex.Store({
     isChangeName:null,//是否修改昵称成功
     isChangeTel:null,//是否修改手机号成功
     isGetCode:null,//验证码是否发送成功
+    todayDate:"",//今天日期
 
 
   },
@@ -64,6 +66,14 @@ export default new Vuex.Store({
     changeIncomePage(state){
       state.buttonTabIndex=1;
       state.isPay=false;
+    },
+    //改变登录状态
+    changeLoginState(state,text){
+      state.isLoginSuccess=text;
+    },
+    //设置日期
+    setTodayDate(state,text){
+      state.todayDate=text;
     },
     //请求验证码数据
     getTestCode(state,text){

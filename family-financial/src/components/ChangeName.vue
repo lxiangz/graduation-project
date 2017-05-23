@@ -32,19 +32,37 @@ export default{
   },
   methods:{
     confirm(){
+      var _this=this;
       if(this.name==""){
         this.toastShow=true;
         this.toastText="昵称不能为空";
         this.toastType="warn";
       }else if(this.name.length<10){
-        //昵称是否重复
         //修改昵称
-        this.$store.commit("setName",name);
-        if(this.$store.state.isChangeName){
-          this.toastShow=true;
-          this.toastText="昵称修改成功";
-          this.toastType="default";
-        }
+       // this.$store.commit("setName",name);
+        this.$instance.post(
+          'update',{
+            name:_this.name
+          })
+          .then(function(response){
+            console.log(response);
+            console.log(response.data);
+            if(response.status==200){
+              var res=response.data;
+              if(res.code==200){
+                _this.toastShow=true;
+                _this.toastText="昵称修改成功";
+                _this.toastType="default";
+              }else{
+                _this.toastShow=true;
+                _this.toastText="昵称重复！";
+                _this.toastType="warn";
+              }
+            }
+          })
+          .catch(function(err){
+            console.log(err);
+          });
       }else{
         this.toastShow=true;
         this.toastText="字符长度过长";
