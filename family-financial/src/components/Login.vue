@@ -68,6 +68,7 @@
         this.$router.push('/lookPSD')
       },
       //登陆
+      //测试完成
       login(){
         var _this = this;
         //验证手机号不为空，格式正确且该账号存在
@@ -115,7 +116,7 @@
                             _this.toastText = res.message;
                             _this.toastType = "warn";
                           } else {
-                            // 登陆成功,
+                            // 登陆成功
                             _this.toastShow = true;
                             _this.toastText = "登陆成功，将直接转到主页";
                             _this.toastType = "default";

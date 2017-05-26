@@ -126,6 +126,7 @@
         }
       },
       //完成注册，注册成功同时登陆
+      //测试完成
       completed(){
         var _this=this;
         //验证验证码不为空且正确
@@ -161,7 +162,7 @@
                          _this.text = "注册成功，将转到登陆页面！";
                          _this.textType="default";
                          setTimeout(function(){
-                           //转到主页
+                           //转到登陆页面
                            _this.$router.push("/login");
                          },3000)
                        }

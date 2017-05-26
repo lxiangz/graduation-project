@@ -1,16 +1,14 @@
 <template>
   <div class="income-more">
     <x-header :left-options="{backText: '',preventGoBack:true}"  @on-click-back="back" >类别</x-header>
-    <scroller  lock-x>
       <div>
         <p style="border-bottom:1px solid #DCDCDC;padding:10px 0 10px 15px;color:	#696969;font-size:14px;" v-for="(income,$index) of incomeTable" :key="income.id"><a href="javascript:;" v-on:click="selectDetails($index)">{{income}}</a></p>
       </div>
-    </scroller>
   </div>
 </template>
 
 <script type="es6">
-import {XHeader,Scroller} from 'vux'
+import {XHeader} from 'vux'
 export default{
   data(){
     return{
@@ -47,8 +45,7 @@ export default{
      }
   },
   components:{
-    XHeader,
-    Scroller,
+    XHeader
   }
 }
 </script>

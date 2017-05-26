@@ -34,27 +34,18 @@
           </a>
         </div>
       </box>
+      <br>
+      <br>
+      <br>
+      <group>
+        <x-button style="width:300px;" type="primary" action-type="button" @click.native="confirm">取消关联</x-button>
+      </group>
+
     </div>
   </div>
 </template>
 <script type="es6">
-  import axios from 'axios'
-  const instance = axios.create({
-    baseURL:"http://172.16.99.106:8080/user/",
-    transformRequest: [function (data) {
-      // Do whatever you want to transform the data
-      let ret = ''
-      for (let it in data) {
-        ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-      }
-      return ret
-    }],
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
-  });
-
- import {XHeader,Cell,Group,Box,XButton,XInput} from 'vux'
+  import {XHeader,Cell,Group,Box,XButton,XInput} from 'vux'
  const code="";
 export default{
   data(){
@@ -95,7 +86,7 @@ export default{
         if (re.test(this.cellphone)) {
           //验证该手机账号是否存在过
          // this.$store.commit('confirmPhone',this.cellphone);
-            instance.post(
+            this.$instance.post(
               'testPhone',{
                 phone:_this.cellphone
               })
@@ -111,7 +102,7 @@ export default{
                     _this.setClickAgain();
                     //获得验证码
                    // this.$store.commit('getTestCode',this.cellphone);
-                    instance.post(
+                    this.$instance.post(
                       'sendSMS',{
                         "phone":_this.cellphone
                       })

@@ -3,25 +3,8 @@
  */
 import Vue from 'vue'
 import Vuex from 'vuex'
-import axios from 'axios'
-
-const instance = axios.create({
-  baseURL:"http://172.16.99.106:8080/user/",
-  transformRequest: [function (data) {
-    // Do whatever you want to transform the data
-    let ret = ''
-    for (let it in data) {
-      ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
-    }
-    return ret
-  }],
-  headers: {
-    'Content-Type': 'application/x-www-form-urlencoded'
-  }
-});
 
 Vue.use(Vuex)
-
 
 export default new Vuex.Store({
   //state 定义了应用状态的数据结构，同样可以在这里设置默认的初始状态

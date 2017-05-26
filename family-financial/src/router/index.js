@@ -15,13 +15,11 @@ import personal from '../components/Personal.vue'
 import addmember from '../components/AddMember.vue'
 import changename from '../components/ChangeName.vue'
 import changetel from '../components/ChangeTel.vue'
-import selecthead from '../components/SelectHead.vue'
-
-
-
-
+import detail from '../components/Detail.vue'
+import checkdetails from '../components/CheckDetails.vue'
+//利用import 将组件导入
 Vue.use(Router)
-
+//设置路由地图
 export default [
   {
     path:'/',
@@ -88,9 +86,13 @@ export default [
         component:changetel
       },
       {
-        path:'/selecthead',
-        component:selecthead
-      }
+        path:'/detail',
+        component:detail
+      },
+      {
+        path:'/checkdetails',
+        component:checkdetails
+      },
     ]
   }
 ]

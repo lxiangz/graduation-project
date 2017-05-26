@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "chart.js": "^2.5.0",
     "fastclick": "^1.0.6",
     "vue": "^2.2.2",
     "vue-router": "^2.2.0",

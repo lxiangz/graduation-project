@@ -4,11 +4,9 @@
     <div class="pay-menus" id="left">
       <p class="pay-menu"  v-for="(pay,$index) of payMenu" :key="pay.id""><a href="javascript:;" v-on:click="openDetails($index)">{{ pay.text}}</a></p>
     </div>
-    <scroller  lock-x>
-      <div class="pay-details" id="right">
+    <div class="pay-details" id="right">
         <p class="pay-menu" v-for="(paydetails,$index) of payDetails" :key="paydetails.id"><a href="javascript:;" v-on:click="selectDetails($index)">{{paydetails}}</a></p>
-      </div>
-    </scroller>
+    </div>
   </div>
 </template>
 
@@ -98,9 +96,9 @@ export default{
 
 <style scoped>
 .pay-menus{
-  float:left;
+  float: left;
   height:621px;
-  width:25%;
+width:25%;
   background-color:	#DCDCDC;
 }
 a:-webkit-any-link {
@@ -116,8 +114,9 @@ a:-webkit-any-link {
   background-color:white;
 }
 .pay-details{
-  float:left;
-  width:100%;
+ float: left;
+  width:75%;
+
 }
 .details_selected{
   background-color:	#F5F5F5;

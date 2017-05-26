@@ -1,118 +1,184 @@
 <template>
   <div class="budget">
-    <x-header :left-options="{backText: ''}">
-      <div slot="default" class="select" v-on:click="show">
-        <span>{{selectedTime}}</span>
-        <img src="../assets/img/arrow.png" width="20px" />
-      </div>
-    </x-header>
-    <div :class="{ 'select-option is-show': isShow, 'select-option is-not-show': !isShow}">
-      <group gutter="0">
-        <cell @click.native="selectT">
-          <span slot="icon">今天</span>
-          <icon  slot="default"   :class="{ 'is-show': isTShow, 'is-not-show': !isTShow}" type="success-no-circle"></icon>
-        </cell>
-        <cell @click.native="selectW">
-          <span slot="icon">本周</span>
-          <icon  slot="default"   :class="{ 'is-show': isWShow, 'is-not-show': !isWShow}" type="success-no-circle"></icon>
-        </cell>
-        <cell @click.native="selectM">
-          <span slot="icon">本月</span>
-          <icon  slot="default"   :class="{ 'is-show': isMShow, 'is-not-show': !isMShow}" type="success-no-circle"></icon>
-        </cell>
-        <cell @click.native="selectQ">
-          <span slot="icon">本季</span>
-          <icon  slot="default"   :class="{ 'is-show': isQShow, 'is-not-show': !isQShow}" type="success-no-circle"></icon>
-        </cell>
-        <cell @click.native="selectY">
-          <span slot="icon">本年</span>
-          <icon  slot="default"   :class="{ 'is-show': isYShow, 'is-not-show': !isYShow}" type="success-no-circle"></icon>
-        </cell>
-      </group>
-    </div>
+    <x-header :left-options="{backText: '设置预算'}"></x-header>
+    <inline-calendar
+      v-model="currentDate"
+      hide-week-list
+      >
+    </inline-calendar>
     <div class="total">
       <group gutter="0" style="width:100%">
-        <x-input style="padding:15px; " required placeholder="0.00">
-          <span style="color:black" slot="label">总预算：</span>
-        </x-input>
+        <cell  title="总预算" :value="budgets"></cell>
       </group>
       <div class="use">
-        <span>0.00</span>
+        <span>{{use}}</span>
         <span>已用</span>
       </div>
       <div class="un-use">
-        <span>0.00</span>
+        <span>{{unUse}}</span>
         <span>可用</span>
       </div>
-
       </div>
+    <group gutter="0" style="width:100%;border-top:15px solid #DCDCDC">
+      <cell  title="管理详细预算:" style="font-weight:bold;color:darkgreen; font-size: larger" >
+        <div slot="default"><icon type="success-no-circle" @click.native="save"></icon></div>
+      </cell>
+      <x-input :title="payItemText" v-model="detailMoney" placeholder="请输入金额" show-clear>
+        <div slot="right">
+          <x-button  type="primary" style="height:35px;border-radius:99px;font-size:15px;" action-type="button" @click.native="selectPay" >选择支出项</x-button>
+        </div>
+      </x-input>
+    </group>
+
+    <confirm v-model="isSaveShow"
+             title=""
+             @on-cancel="onCancel"
+             @on-confirm="onConfirm"
+            >
+      <div slot="default">
+        <icon type="safe_warn" is-msg></icon><br><br>
+        <span style="font-size:18px;">当前修改的是xx预算:xxxx<br>是否修改为xxxx?</span>
+      </div>
+    </confirm>
+    <picker v-if="isShow" v-model="payItem" :data="payItems" @on-change="payItemChange"></picker>
+
+    <group gutter="0" style="width:100%;border-top:15px solid #DCDCDC">
+      <cell  title="详细预算:"  style="font-weight:bold;color:darkgreen;font-size: larger" ></cell>
+      <scroller lock-x height="-380">
+        <cell  is-link>
+          <img slot="icon" width="45px" src="../assets/vux_logo.png" />
+          <div slot="after-title" style="margin-left:5px;height:50px;">
+            <span style="margin-right:100px;">餐饮</span>
+            <span style="color:grey;font-size:15px;">余额</span>
+            <span style="font-size:15px;">0.00</span>
+            <x-progress :percent="foodPercent" :show-cancel="false"></x-progress>
+            <span style="color:grey;font-size:15px;">预算 0.00</span>
+          </div>
+        </cell>
+        <cell  is-link>
+          <img slot="icon" width="45px" src="../assets/vux_logo.png" />
+          <div slot="after-title" style="margin-left:5px;height:50px;">
+            <span style="margin-right:100px;">交通</span>
+            <span style="color:grey;font-size:15px;">余额</span>
+            <span style="font-size:15px;">50.00</span>
+            <x-progress :percent="trafficPercent" :show-cancel="false"></x-progress>
+            <span style="color:grey;font-size:15px;">预算 100.00</span>
+          </div>
+        </cell>
+        <cell  is-link>
+          <img slot="icon" width="45px" src="../assets/vux_logo.png" />
+          <div slot="after-title" style="margin-left:5px;height:50px;">
+            <span style="margin-right:100px;">购物</span>
+            <span style="color:grey;font-size:15px;">余额</span>
+            <span style="font-size:15px;">50.00</span>
+            <x-progress :percent="shopPercent" :show-cancel="false"></x-progress>
+            <span style="color:grey;font-size:15px;">预算 200.00</span>
+          </div>
+        </cell>
+        <cell  is-link>
+          <img slot="icon" width="45px" src="../assets/vux_logo.png" />
+          <div slot="after-title" style="margin-left:5px;height:50px;">
+            <span style="margin-right:100px;">医教</span>
+            <span style="color:grey;font-size:15px;">余额</span>
+            <span style="font-size:15px;">50.00</span>
+            <x-progress :percent="mediEduPercent" :show-cancel="false"></x-progress>
+            <span style="color:grey;font-size:15px;">预算 500.00</span>
+          </div>
+        </cell>
+        <cell  is-link>
+          <img slot="icon" width="45px" src="../assets/vux_logo.png" />
+          <div slot="after-title" style="margin-left:5px;height:50px;">
+            <span style="margin-right:100px;">居家</span>
+            <span style="color:grey;font-size:15px;">余额</span>
+            <span style="font-size:15px;">-50</span>
+            <x-progress :percent="homePercent" :show-cancel="false"></x-progress>
+            <span style="color:grey;font-size:15px;">预算 500.00</span>
+          </div>
+        </cell>
+        <cell  is-link>
+          <img slot="icon" width="45px" src="../assets/vux_logo.png" />
+          <div slot="after-title" style="margin-left:5px;height:50px;">
+            <span style="margin-right:100px;">投资</span>
+            <span style="color:grey;font-size:15px;">余额</span>
+            <span style="font-size:15px;">0.00</span>
+            <x-progress :percent="investPercent" :show-cancel="false"></x-progress>
+            <span style="color:grey;font-size:15px;">预算 0.00</span>
+          </div>
+        </cell>
+        <cell  is-link>
+          <img slot="icon" width="45px" src="../assets/vux_logo.png" />
+          <div slot="after-title" style="margin-left:5px;height:50px;">
+            <span style="margin-right:100px;">人情</span>
+            <span style="color:grey;font-size:15px;">余额</span>
+            <span style="font-size:15px;">0.00</span>
+            <x-progress :percent="feelsPercent" :show-cancel="false"></x-progress>
+            <span style="color:grey;font-size:15px;">预算 0.00</span>
+          </div>
+        </cell>
+        <cell  is-link>
+          <img slot="icon" width="45px" src="../assets/vux_logo.png" />
+          <div slot="after-title" style="margin-left:5px;height:50px;">
+            <span style="margin-right:100px;">生意</span>
+            <span style="color:grey;font-size:15px;">余额</span>
+            <span style="font-size:15px;">0.00</span>
+            <x-progress :percent="businessPercent" :show-cancel="false"></x-progress>
+            <span style="color:grey;font-size:15px;">预算 0.00</span>
+          </div>
+        </cell>
+      </scroller>
+    </group>
+
     </div>
 </template>
 <script type="es6">
-import {XHeader,Group,Cell,Icon,XInput} from 'vux'
-
+import {XHeader,Group,Cell,Icon,XInput,InlineCalendar,Picker,XButton,XProgress,Scroller,Confirm} from 'vux'
+const payItems=['餐饮', '交通', '购物', '娱乐', '医教', '居家', '投资', '人情', '生意'];
 export default{
   data(){
     return{
+      currentDate:"",//当前选中日期，默认为空，即选中当天日期
+      budgets:"0.00",
+      use:"0.00",
+     unUse:"0.00",
+      detailMoney:"",
+      isSaveShow:false,
       isShow:false,
-      isTShow:true,
-      isWShow:false,
-      isMShow:false,
-      isQShow:false,
-      isYShow:false,
-      selectedTime:'今天',
-      selectOptions:['今天','本周','本月','本季','本年'],
+      payItem:[""],
+      payItems:[['餐饮', '交通', '购物', '娱乐', '医教', '居家', '投资', '人情', '生意']],
+      payItemText:"餐饮金额：",
+      foodPercent:0,
+      trafficPercent:50,
+      shopPercent:25,
+      mediEduPercent:10,
+      homePercent:0,
+      investPercent:0,
+      feelsPercent:34,
+      businessPercent:67,
+
+
     }
   },
   methods:{
-    show(){
+    selectPay(){
       if(this.isShow){
         this.isShow=false;
-      }
-      else{
+      }else{
         this.isShow=true;
       }
+      console.log("sss");
     },
-    selectT(){
-      if(this.isTShow||this.isWShow||this.isMShow||this.isQShow||this.isYShow){
-        this.isTShow=this.isWShow=this.isMShow=this.isQShow=this.isYShow=false;
-      }
-      this.isTShow=true;
-      this.selectedTime='今天';
-      this.isShow=false;
+    payItemChange(){
+      //this.isShow=false;
+      console.log(this.payItem[0]);
+      console.log("ddd");
+      this.payItemText=this.payItem[0]+"金额："
     },
-    selectW(){
-      if(this.isTShow||this.isWShow||this.isMShow||this.isQShow||this.isYShow){
-        this.isTShow=this.isWShow=this.isMShow=this.isQShow=this.isYShow=false;
-      }
-      this.isWShow=true;
-      this.selectedTime='本周';
-      this.isShow=false;
+    save(){
+      this.isSaveShow=true;
     },
-    selectM(){
-      if(this.isTShow||this.isWShow||this.isMShow||this.isQShow||this.isYShow){
-        this.isTShow=this.isWShow=this.isMShow=this.isQShow=this.isYShow=false;
-      }
-      this.isMShow=true;
-      this.selectedTime='本月';
-      this.isShow=false;
-    },
-    selectQ(){
-      if(this.isTShow||this.isWShow||this.isMShow||this.isQShow||this.isYShow){
-        this.isTShow=this.isWShow=this.isMShow=this.isQShow=this.isYShow=false;
-      }
-      this.isQShow=true;
-      this.selectedTime='本季';
-      this.isShow=false;
-    },
-    selectY(){
-      if(this.isTShow||this.isWShow||this.isMShow||this.isQShow||this.isYShow){
-        this.isTShow=this.isWShow=this.isMShow=this.isQShow=this.isYShow=false;
-      }
-      this.isYShow=true;
-      this.selectedTime='本年';
-      this.isShow=false;
-    },
+    onCancel(){
+      this.isSaveShow=false;
+    }
   },
   mounted:function () {
   },
@@ -121,34 +187,27 @@ export default{
     Group,
     Cell,
     Icon,
-    XInput
+    XInput,
+    InlineCalendar,
+    Picker,
+    XButton,
+    XProgress,
+    Scroller,
+    Confirm,
   }
 }
 </script>
 <style scoped>
-  .select{
-  margin-left:70px;
-  width:30%;
-}
 
   /* 链接样式 */
   a:-webkit-any-link {
   color:black;
 }
-.select-option{
-  position:absolute;
-  z-index:5;
-  top:45px;
-  width:100%;
-}
-
-/* 选择框选项是否显示样式  */
-.is-show{
-  display:block;
-}
-.is-not-show{
-  display:none;
-}
+/* icon样式 */
+  img{
+    border-radius:50%;
+    border:1px solid lightgreen;
+  }
 
 /* 预算总共 */
   .total{
@@ -162,14 +221,13 @@ export default{
 /* 相同属性提取共用css选择器 */
 .use,.un-use{
  padding:10px 0 10px 18px;
-  float:left;
-  border-bottom:15px solid #DCDCDC;
+  display:inline-block;
 }
 .use{
-  width:43%;
+  width:45%;
 }
 .un-use{
-  width:47%;
+  width:43%;
   border-left:1px dotted;
 }
 </style>

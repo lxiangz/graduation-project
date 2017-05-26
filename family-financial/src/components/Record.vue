@@ -216,7 +216,7 @@ export default{
   mounted:function () {
     this.paySelectedItem=this.$store.state.paySelectedItem;
     this.incomeSelectedItem=this.$store.state.incomeSelectedItem;
-    this.isPay=this.$store.state.isPay;
+    //this.isPay=this.$store.state.isPay;
 
     var btns;
     if(this.isPay){

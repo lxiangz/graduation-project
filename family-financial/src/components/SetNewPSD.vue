@@ -38,6 +38,7 @@ export default{
     }
   },
   methods:{
+    //测试完成
     confirm(){
       var _this=this;
       //验证均不为空，验证密码格式，验证是否相等

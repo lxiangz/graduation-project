@@ -5,7 +5,7 @@
       <div class="flex-demo upper">
         <flexbox class="flexbox-row">
           <flexbox-item :span="2/12"></flexbox-item>
-          <flexbox-item :span="10/12" v-if="!isLogin">
+          <flexbox-item :span="10/12">
             <div >
               <img  width="25px" src="../assets/img/remind.png"/>
               <span v-if="!isLogin" style="">欢迎您，请先<a  href="javascript:;" @click="login" >登录</a></span>

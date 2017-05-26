@@ -6,11 +6,11 @@ import VueRouter from 'vue-router'
 import App from './App'
 import routes from './router/index'
 import axios from 'axios';
+import Chart from 'chart.js';
 Vue.use(VueRouter)
-
 //ajax请求设置
 Vue.prototype.$instance = axios.create({
-  baseURL: "http://172.16.97.33:8080/user/",
+  baseURL: "http://172.16.96.6:8080/user/",
   transformRequest: [function (data) {
     // Do whatever you want to transform the data
     let ret = ''
@@ -24,14 +24,14 @@ Vue.prototype.$instance = axios.create({
   },
  withCredentials:true,
 });
+
+Vue.prototype.$chart=Chart;
+Vue.prototype.$bar=Chart.Bar;
 const router = new VueRouter({
    routes
 })
-
 FastClick.attach(document.body)
-
 Vue.config.productionTip = false
-
 /* eslint-disable no-new */
 new Vue({
   router,

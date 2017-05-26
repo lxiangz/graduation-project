@@ -115,6 +115,7 @@ export default{
         }
       }
     },
+    //测试完成
     setNewPSD(){
       //验证码不为空，且正确
       if(this.testCode==""){
