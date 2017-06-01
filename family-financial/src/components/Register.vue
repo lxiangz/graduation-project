@@ -77,7 +77,7 @@
           if (re.test(this.cellphone)) {
             //验证手机号是否已注册过
             _this.$instance.post(
-              'testPhone',{
+              'user/testPhone',{
                 phone:_this.cellphone
               })
               .then(function(response){
@@ -90,7 +90,7 @@
                     _this.setClickAgain();
                     //获得验证码
                     _this.$instance.post(
-                      'sendSMS',{
+                      'user/sendSMS',{
                         "phone":_this.cellphone
                       })
                       .then(function(response){
@@ -150,7 +150,7 @@
                  //发送请求
                  // 注册成功，直接登陆
                  _this.$instance.post(
-                   'register',{phone:this.cellphone,password:md5Psd})
+                   'user/register',{phone:this.cellphone,password:md5Psd})
                    .then(function(response){
                      if(response.status==200){
                        var res=response.data;

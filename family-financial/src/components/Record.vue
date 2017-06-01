@@ -2,16 +2,16 @@
   <div id="record">
     <x-header :left-options="{backText: '',preventGoBack:true}"  @on-click-back="back" >
       <div slot="default" style="padding-top:5px;">
-        <button-tab v-model="buttonTabIndex" >
-          <button-tab-item @on-item-click="payClick()">支出</button-tab-item>
-          <button-tab-item @on-item-click="incomeClick()">收入</button-tab-item>
+        <button-tab  >
+          <button-tab-item  :selected="isPay"  @on-item-click="payClick()">支出</button-tab-item>
+          <button-tab-item :selected="!isPay"  @on-item-click="incomeClick()">收入</button-tab-item>
         </button-tab>
       </div>
       <div slot="right"><icon type="success-no-circle" @click.native="record"></icon></div>
     </x-header>
     <div class="financial">
       <group gutter="0">
-        <x-input style="padding:10px 15px" v-model="money" required placeholder="0.00">
+        <x-input style="padding:10px 15px" v-model="money" required placeholder="精确到小数点后一位">
           <span style="color:black" slot="label">金额：</span>
         </x-input>
       </group>
@@ -44,13 +44,19 @@
         </x-input>
       </group>
       <box style="padding:0px 16px 12px 16px;">
-        <x-button  mini>
-          <span slot="default"><icon type="waiting-circle"></icon>{{todayDate}}&nbsp;</span>
+        <x-button  mini @click.native="selectDate">
+          <span slot="default"><icon type="waiting-circle"></icon>{{selectedDate}}&nbsp;</span>
         </x-button>
         <x-button  mini>
           <span slot="default"><icon type="info-circle"></icon>现金</span>
         </x-button>
       </box>
+      <inline-calendar
+        v-if="showDate"
+        v-model="selectedDate"
+        disable-future
+        >
+      </inline-calendar>
     </div>
     <div class="blank">&nbsp;</div>
     <div class="cost">
@@ -69,7 +75,7 @@
           <a href="javascript:;" >
             <div class="little-container " >
               <img id="pay-primary" @click="selectedMember" width="56px" src="../assets/logo.png" />
-              <span>好奇宝宝</span>
+              <span>{{name}}</span>
             </div>
           </a>
         </box>
@@ -77,66 +83,101 @@
           <div class="little-container select " id="income.primary" @click="selectedMember">
             <a >
               <img width="56px" src="../assets/logo.png" />
-              <span>好奇宝宝</span>
+              <span>{{name}}</span>
             </a>
           </div>
         </box>
       </div>
     </div>
+    <!--显示警告信息-->
+    <toast v-model="toastShow" width="9.5em" :type="toastType"  position="top">
+      <span slot="default">{{toastText}}</span>
+    </toast>
   </div>
 </template>
 
 <script type="es6">
-import { XHeader,ButtonTab, ButtonTabItem,Icon,Group,XInput,XButton,Box,Cell} from 'vux'
+import { XHeader,ButtonTab, ButtonTabItem,Icon,Group,XInput,XButton,Box,Cell,InlineCalendar,Toast} from 'vux'
 export default{
   data(){
     return{
       isLogin:false,
-      buttonTabIndex:0,
+      current:"record",
       isPay:true,
-      money:"0.00",//输入金额
+      money:"0.0",//输入金额
       remark:"",//备注
-      todayDate:"",//当前日期
+      showDate:false,//是否显示选择时间组件
+      selectedDate:"",//选中日期
       paySelectedItem:"...",
       incomeSelectedItem:"...",
       member:"家庭公共",
+      name:"好奇宝宝",//昵称
+      type:"",//支出或收入
       //收入或支出原因
       recordReason:"",
+
+      //警告信息
+      toastShow:false,
+      toastType:"warn",
+      toastText:"",
     }
   },
   methods:{
     back(){
+     this.$store.commit("changeRecordState",true)
       this.$router.push('/home');
     },
-    payClick(){
-      this.isPay=true;
-      var  btns=document.getElementById("pay-btns").getElementsByTagName("button")
-      for(var i=0;i<btns.length;i++){
-        btns[i].className="weui-btn weui-btn_mini weui-btn_default weui-btn_plain-default ";
-      }
-      btns[0].className="weui-btn select-btn weui-btn_mini weui-btn_default weui-btn_plain-default";
-      this.recordReason="买菜原料"
-      var divs=document.getElementById("pay-box").getElementsByTagName("div");
-      for(var i=1;i<divs.length;i++){
-        divs[i].className="little-container";
-      }
-      this.member="家庭公共"
-    },
-    incomeClick(){
-      this.isPay=false;
+    //支出页面初始化
+     payInit(){
+       var  btns=document.getElementById("pay-btns").getElementsByTagName("button")
+       for(var i=0;i<btns.length;i++){
+         btns[i].className="weui-btn weui-btn_mini weui-btn_default weui-btn_plain-default ";
+       }
+       btns[0].className="weui-btn select-btn weui-btn_mini weui-btn_default weui-btn_plain-default";
+       this.recordReason="饮料水果"
+       var divs=document.getElementById("pay-box").getElementsByTagName("div");
+       for(var i=1;i<divs.length;i++){
+         divs[i].className="little-container";
+       }
+       this.member="家庭公共"
+     },
+    //收入页面初始化
+    incomeInit(){
       var  btns=document.getElementById("income-btns").getElementsByTagName("button")
       for(var i=0;i<btns.length;i++){
         btns[i].className="weui-btn weui-btn_mini weui-btn_default weui-btn_plain-default ";
       }
       btns[0].className="weui-btn select-btn weui-btn_mini weui-btn_default weui-btn_plain-default";
       this.recordReason="工资薪水"
-      this.member="好奇宝宝"
+      this.member=this.name
+    },
+    payClick(){
+      this.isPay=true;
+      this.$store.commit("changeRecordState",true);
+      this.payInit();
+    },
+    incomeClick(){
+      this.isPay=false;
+      this.$store.commit("changeRecordState",false);
+     this.incomeInit();
 
     },
     payMore(){
+      this.$store.commit("saveRecordData",{
+        money:this.money,
+        remark:this.remark,
+        selectedDate:this.selectedDate
+      });
+      this.$store.commit("changePage","record");
       this.$router.push('/paymore')
     },
     incomeMore(){
+      this.$store.commit("saveRecordData",{
+        money:this.money,
+        remark:this.remark,
+        selectedDate:this.selectedDate
+      });
+      this.$store.commit("changePage","record");
       this.$router.push('/incomemore')
     },
     selected(e){
@@ -160,6 +201,7 @@ export default{
         case "lunch":{this.recordReason="午餐";break;}
         case "dinner":{this.recordReason="晚餐";break;}
         case "pay-more":{this.recordReason=this.paySelectedItem;break;}
+        case "mon-income":{this.recordReason="工资薪水";break;}
         case "two-job":{this.recordReason="兼职外快";break;}
         case "welfare":{this.recordReason="福利补贴";break;}
         case "gift":{this.recordReason="礼金";break;}
@@ -179,23 +221,73 @@ export default{
         member.parentNode.className="little-container select";
         this.member=member.nextSibling.nextSibling.innerHTML;
       }else{
-        this.member="好奇宝宝"
+        this.member=this.name
       }
 
     },
+    selectDate(){
+      if(this.showDate){
+        this.showDate=false;
+      }else{
+        this.showDate=true;
+      }
+    },
     record(){
-      var nowYear = new Date().getYear(); //当前年
-      nowYear += (nowYear < 2000) ? 1900 : 0;
+      var _this=this;
       console.log(this.money);
       console.log(this.recordReason);
       console.log(this.remark);
-      console.log(nowYear+"-"+this.todayDate);
+      console.log(this.selectedDate);
       console.log(this.member);
       if(this.isPay){
+        this.type="支出";
         console.log("支出")
       }else{
+        this.type="收入";
         console.log("收入")
       }
+     var num =/^(([1-9]{1}\d*)|([0]{1}))(\.(\d){1,1})?$/;
+      var re = new RegExp(num);
+      if(this.money==""){
+        this.toastShow=true;
+        this.toastType="warn";
+        this.toastText="金额不能为空";
+      }else if(this.money<=0){
+        this.toastShow=true;
+        this.toastType="warn";
+        this.toastText="金额不能小于等于0";
+      }else if(re.test(this.money)){
+        //记账
+        this.$instance.post('bill/addBill',{
+          num:_this.money,
+          member:_this.member,
+          typeName:_this.recordReason,
+          remake:_this.remark,
+          time:_this.selectedDate,
+          type:_this.type,
+        }).then(function(response){
+          if(response.status==200){
+            var res=response.data;
+            if(res.code===200){
+              console.log("sss");
+              _this.toastShow=true;
+              _this.toastType="default";
+              _this.toastText="记账成功";
+              _this.money="0.0";
+            }else if(res.code===404){
+
+            }
+          }
+        })
+          .catch(function(err){
+            console.log(err);
+          });
+      }else {
+        this.toastShow=true;
+        this.toastType="warn";
+        this.toastText="金额格式错误";
+      }
+
     }
   },
   components:{
@@ -207,36 +299,46 @@ export default{
     XInput,
     Box,
     XButton,
-    Cell
-  },
-  created:function () {
-    this.paySelectedItem=this.$store.state.paySelectedItem;
-    this.incomeSelectedItem=this.$store.state.incomeSelectedItem;
+    Cell,
+    InlineCalendar,
+    Toast
   },
   mounted:function () {
+    //状态
     this.paySelectedItem=this.$store.state.paySelectedItem;
     this.incomeSelectedItem=this.$store.state.incomeSelectedItem;
-    //this.isPay=this.$store.state.isPay;
-
-    var btns;
-    if(this.isPay){
-      btns=document.getElementById("pay-btns").getElementsByTagName("button")
+    this.isPay=this.$store.state.isPay;
+    this.money=this.$store.state.money;
+    this.remark=this.$store.state.remark;
+    //获取日期
+    if(this.$store.state.selectedDate==""){
+      this.selectedDate=this.$store.state.todayDate;
     }else{
-      btns=document.getElementById("income-btns").getElementsByTagName("button")
+      this.selectedDate=this.$store.state.selectedDate;
     }
-    for(var i=0;i<btns.length;i++){
-      btns[i].className="weui-btn weui-btn_mini weui-btn_default weui-btn_plain-default ";
-    }
+    //初始化
     if(this.isPay){
-      btns[0].className="weui-btn select-btn weui-btn_mini weui-btn_default weui-btn_plain-default";
-      this.recordReason="买菜原料"
+      this.payInit();
     }else{
-      btns[0].className="weui-btn select-btn weui-btn_mini weui-btn_default weui-btn_plain-default";
-      this.recordReason="工资薪水"
+      this.incomeInit();
     }
 
-    //今天日期设置
-   this.todayDate=this.$store.state.todayDate;
+    //获取昵称
+    var _this=this;
+    this.$instance.get('user/getUser').then(function(response){
+      if(response.status==200){
+        var res=response.data;
+        if(res.code===200){
+          console.log("sss");
+          _this.name=res.user.username;
+        }else if(res.code===400){
+          console.log(res.message);
+        }
+      }
+    })
+      .catch(function(err){
+        console.log(err);
+      });
   }
 }
 </script>

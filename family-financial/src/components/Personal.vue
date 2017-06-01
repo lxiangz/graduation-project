@@ -65,7 +65,26 @@ export default{
     }
   },
   mounted:function(){
-    this.cellphone=this.$store.state.cellphone;
+  //获取昵称、手机号 测试完成
+    //获取头像、昵称、手机号
+    var _this=this;
+    this.$instance.get('user/getUser').then(function(response){
+        console.log(response);
+      console.log(response.data);
+        if(response.status==200){
+          var res=response.data;
+          if(res.code===200){
+            console.log("sss");
+            _this.name=res.user.username;
+            _this.cellphone=res.user.phone;
+          }else if(res.code===400){
+            console.log(res.message);
+          }
+        }
+      })
+      .catch(function(err){
+        console.log(err);
+      });
   },
   components:{
     XHeader,

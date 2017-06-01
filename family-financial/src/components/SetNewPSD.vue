@@ -59,7 +59,7 @@ export default{
             var md5Psd=hex_md5(this.newPSD);
             //发送请求
             _this.$instance.post(
-              'setNewPSD',{
+              'user/setNewPSD',{
                 phone:_this.$store.state.cellphone,
                 password:md5Psd
               })

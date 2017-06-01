@@ -17,6 +17,7 @@ import changename from '../components/ChangeName.vue'
 import changetel from '../components/ChangeTel.vue'
 import detail from '../components/Detail.vue'
 import checkdetails from '../components/CheckDetails.vue'
+import showdetails from '../components/ShowDetails.vue'
 //利用import 将组件导入
 Vue.use(Router)
 //设置路由地图
@@ -92,6 +93,10 @@ export default [
       {
         path:'/checkdetails',
         component:checkdetails
+      },
+      {
+        path:'/showdetails',
+        component:showdetails
       },
     ]
   }

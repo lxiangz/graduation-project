@@ -69,8 +69,8 @@
       },
       //登陆
       //测试完成
-      login(){
-        var _this = this;
+      login(){ var _this = this;
+
         //验证手机号不为空，格式正确且该账号存在
         if (this.cellphone === "") {
           this.toastShow = true;
@@ -87,7 +87,7 @@
           if (re.test(this.cellphone)) {
             //验证该手机账号是否注册过
             _this.$instance.post(
-              'testPhone', {
+              'user/testPhone', {
                 phone: this.cellphone
               })
               .then(function (response) {
@@ -102,7 +102,7 @@
                     var md5Psd=hex_md5(_this.password);
                     //请求数据，获得加密后的密码并比较
                     _this.$instance.post(
-                      'login', {
+                      'user/login', {
                         phone: _this.cellphone,
                         password:md5Psd
                       })

@@ -10,7 +10,7 @@ import Chart from 'chart.js';
 Vue.use(VueRouter)
 //ajax请求设置
 Vue.prototype.$instance = axios.create({
-  baseURL: "http://172.16.96.6:8080/user/",
+  baseURL: "http://172.16.97.230:8080/",
   transformRequest: [function (data) {
     // Do whatever you want to transform the data
     let ret = ''

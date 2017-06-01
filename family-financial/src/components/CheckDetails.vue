@@ -2,81 +2,23 @@
   <div id="check-details">
     <x-header :left-options="{backText: '帐单明细'}"></x-header>
     <group gutter="0">
-      <cell title="帐单明细图:" is-link arrow-direction="down"></cell>
+      <cell title="帐单明细图" is-link arrow-direction="down" @click.native="show"></cell>
     </group>
-    <!--柱形图，出错！
-    <div>
-      <canvas id="myChart" width="400" height="400"></canvas>
-    </div>-->
+    <group gutter="0">
+      <cell title="帐单明细" is-link @click.native="showDetails"></cell>
+    </group>
+      <!--柱形图-->
+      <div id="column" style="height:250px;width:375px;display:none">
 
-    <!--以图形显示-->
-    <div>
-      <img  src="../assets/img/bing.png" />
-      <img  src="../assets/img/zhu.png" />
-    </div>
-    <scroller lock-x height="-245px;">
-      <!--以时间线显示明细-->
-      <group >
-        <cell title="2017-05-20" is-link></cell>
-      </group>
+      </div>
+      <!--以图形显示-->
+      <div id="pie" style="height:250px;width:375px;display:none">
 
-      <group gutter="0">
-        <cell title="2017-05-21" is-link arrow-direction="down"></cell>
-      </group>
-      <div>
-        <timeline style="margin:0;padding-bottom: 0px;">
-          <timeline-item>
-            <group gutter="0">
-              <cell>
-                <div slot="after-title" style="margin-left:5px;height:20px;">
-                  <p>午餐支出20元 好奇宝宝</p>
-                </div>
-                <icon slot="default" @click.native="deleteItem" type="cancel"></icon>
-              </cell>
-            </group>
-          </timeline-item>
-          <timeline-item>
-            <group gutter="0">
-              <cell>
-                <div slot="after-title" style="margin-left:5px;height:20px;">
-                  <p>晚餐支出20元  好奇宝宝</p>
-                </div>
-                <icon slot="default" type="cancel"></icon>
-              </cell>
-            </group>
-          </timeline-item>
-          <timeline-item>
-            <group gutter="0">
-              <cell>
-                <div slot="after-title" style="margin-left:5px;height:20px;">
-                  <p>水果支出20元 家庭公共</p>
-                </div>
-                <icon slot="default" type="cancel"></icon>
-              </cell>
-            </group>
-          </timeline-item>
-        </timeline>
       </div>
-      <group gutter="0">
-        <cell title="2017-05-22" is-link ></cell>
-      </group>
-      <group gutter="0">
-        <cell title="2017-05-23" is-link></cell>
-      </group>
-      <group gutter="0">
-        <cell title="2017-05-21" is-link ></cell>
-      </group>
-    </scroller>
-    <confirm v-model="isDelete"
-             title=""
-             @on-cancel="onCancel"
-             @on-confirm="onConfirm"
-      >
-      <div slot="default">
-        <icon type="safe_warn" is-msg></icon><br><br>
-        <span style="font-size:18px;">确定删除该条记录吗？</span>
-      </div>
-    </confirm>
+
+
+
+
   </div>
 </template>
 <script type="es6">
@@ -85,15 +27,26 @@
   export default{
     data(){
       return{
-        isDelete:false,
+
       }
     },
     methods:{
-      deleteItem(){
-        this.isDelete=true;
+      show(){
+        var column=document.getElementById("column");
+        var pie=document.getElementById("pie");
+        if(column.style.display=="block"){
+          column.style.display="none"
+        }else{
+          column.style.display="block"
+        }
+        if(pie.style.display=="block"){
+          pie.style.display="none"
+        }else{
+          pie.style.display="block"
+        }
       },
-      onCancel(){
-        this.isDelete=false;
+      showDetails(){
+        this.$router.push("/showdetails");
       }
     },
     components:{
@@ -104,37 +57,58 @@
       TimelineItem,
       Scroller,
       Icon,
-      Confirm
+      Confirm,
     },
     mounted(){
-     /* var data = {
-        labels : ["January","February","March","April","May","June","July"],
-        datasets : [
+      //获取查询条件
+
+      //绘画柱形图
+      // 引入 ECharts 主模块
+      var echarts = require('echarts/lib/echarts');
+// 引入柱状图
+      require('echarts/lib/chart/bar');
+      require('echarts/lib/chart/pie');
+// 引入提示框和标题组件
+      require('echarts/lib/component/tooltip');
+      require('echarts/lib/component/title');
+
+// 基于准备好的dom，初始化echarts实例
+      var columnChart = echarts.init(document.getElementById('column'));
+// 绘制图表
+      columnChart.setOption({
+        xAxis: {
+          data: ['餐饮', '交通', '购物', '娱乐', '医教', '居家']
+        },
+        yAxis: {},
+        series: [{
+          name: '销量',
+          type: 'bar',
+          data: [50, 200, 306, 100, 100, 200]
+        }]
+      });
+
+      var pieChart = echarts.init(document.getElementById('pie'));
+      pieChart.setOption({
+        series : [
           {
-            fillColor : "rgba(220,220,220,0.5)",
-            strokeColor : "rgba(220,220,220,1)",
-            data : [65,59,90,81,56,55,40]
-          },
-          {
-            fillColor : "rgba(151,187,205,0.5)",
-            strokeColor : "rgba(151,187,205,1)",
-            data : [28,48,40,19,96,27,100]
+            name: '访问来源',
+            type: 'pie',
+            radius: '65%',
+            roseType: 'angle',
+            data:[
+              {value:235, name:'餐饮'},
+              {value:274, name:'交通'},
+              {value:310, name:'购物'},
+              {value:0, name:'人情0'},
+              {value:335, name:'娱乐'},
+              {value:200, name:'医教'},
+              {value:400, name:'居家'},
+              {value:0, name:'投资0'},
+              {value:400, name:'生意'}
+            ]
           }
         ]
-      }
-      //Get the context of the canvas element we want to select
-      var ctx = document.getElementById("myChart").getContext("2d");
-      var barChart = new Chart(ctx).Bar(data, {
-        scaleLabel: "$"+"<%=value%>",
-        //是否绘制柱状条的边框
-        barShowStroke: true,
-        //柱状条边框的宽度
-        barStrokeWidth: 2,
-        //柱状条组之间的间距(过大或过小会出现重叠偏移错位的效果，请控制合理数值)
-        barValueSpacing: 5,
-        //每组柱状条组中柱状条之间的间距
-        barDatasetSpacing: 5,
-      });*/
+      })
     }
   }
 </script>

@@ -11,7 +11,7 @@
           <img  slot="label" width="25px" src="../assets/img/test_code.png"  />
         </x-input>
       </group>
-      <box  class="related-account" >
+      <box  gap="10px 20px">
         <x-button type="primary" action-type="button" @click.native="confirm">确定</x-button>
       </box>
     </div>
@@ -93,24 +93,24 @@ export default{
           //验证手机号是否已注册过
           //this.$store.commit('confirmPhone',this.cellphone);
           _this.$instance.post(
-            'testPhone',{
+            'user/testPhone',{
               phone:_this.cellphone
             })
             .then(function(response){
               console.log(response);
               if(response.status==200){
                 var res=response.data;
-                if(res.code==404){
+                if(res.code==200){
                   _this.toastShow=true;
-                  _this.toastText="该手机号未注册";
+                  _this.toastText="该手机号已注册";
                   _this.toastType="warn";
                 }else{
                   //一分钟后可再次点击获取验证码按钮
                   _this.setClickAgain();
                   //获得验证码
                   //this.$store.commit('getTestCode', this.cellphone);
-                  _this.instance.post(
-                    'sendSMS',{
+                  _this.$instance.post(
+                    'user/sendSMS',{
                       "phone":_this.cellphone
                     })
                     .then(function(response){
@@ -144,38 +144,44 @@ export default{
     },
     confirm(){
       var _this=this;
-      if(_this.isRight==false){
-        this.show=true;
-        //document.getElementById('password').getElementsByTagName('input')[0].focus();
-      } else if(this.testCode==""){
+     if(this.testCode==""){
         this.toastShow = true;
         this.toastText = "验证码不能为空！";
         this.toastType="warn";
       }else if(this.testCode==this.code){
         //修改手机号
-       // this.$store.commit("setPhone",this.cellphone);
-        _this.$instance.post(
-          'update',{
-            "phone":_this.cellphone
-          })
-          .then(function(response){
-            console.log(response);
-            if(response.status==200){
-              var res=response.data;
-              if(res.code===200){
-                _this.toastShow = true;
-                _this.toastText = "手机号修改成功！";
-                _this.toastType="default";
-              }else if(res.code===400){
-                _this.toastShow = true;
-                _this.toastText = "手机号修改失败！";
-                _this.toastType="warn";
-              }
-            }
-          })
-          .catch(function(err){
-            console.log(err);
-          });
+       //弹出密码确认框
+       if(_this.isRight==false){
+         this.show=true;
+         //document.getElementById('password').getElementsByTagName('input')[0].focus();
+       }else{
+         //如果密码正确进行修改手机操作
+         _this.$instance.post(
+           'user/update',{
+             "phone":_this.cellphone
+           })
+           .then(function(response){
+             console.log(response);
+             if(response.status==200){
+               var res=response.data;
+               if(res.code===200){
+                 _this.toastShow = true;
+                 _this.toastText = "手机号修改成功！";
+                 _this.toastType="default";
+                 _this.testCode="";
+                 //_this.cellphone="";
+               }else if(res.code===404){
+                 _this.toastShow = true;
+                 _this.toastText = "手机号修改失败！";
+                 _this.toastType="warn";
+               }
+             }
+           })
+           .catch(function(err){
+             console.log(err);
+           });
+       }
+
       }else{
         this.toastShow = true;
         this.toastText = "验证码错误！";
@@ -195,8 +201,8 @@ export default{
       }else{
         //发送请求正确与否
         this.$instance.post(
-          'testPsd',{
-            "phone":hex_md5(_this.password)
+          'user/testPsd',{
+            "password":hex_md5(_this.password)
           })
           .then(function(response){
             console.log(response);
@@ -205,8 +211,10 @@ export default{
               if(res.code===200){
                _this.isRight=true;
                 _this.show=false;
-              }else if(res.code===400){
-                _this.isRight=false;
+                _this.toastShow = true;
+                _this.toastText = "密码确认正确，请再次点击确认按钮！";
+                _this.toastType="warn";
+              }else if(res.code===404){
                 _this.toastShow = true;
                 _this.toastText = "密码错误！";
                 _this.toastType="warn";

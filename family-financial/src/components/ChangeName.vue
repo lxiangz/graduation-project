@@ -41,8 +41,8 @@ export default{
         //修改昵称
        // this.$store.commit("setName",name);
         this.$instance.post(
-          'update',{
-            name:_this.name
+          'user/update',{
+            username:_this.name
           })
           .then(function(response){
             console.log(response);

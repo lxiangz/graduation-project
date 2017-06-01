@@ -36,16 +36,29 @@ export default{
   },
   methods:{
     back(){
-      this.$router.push('/record');
-      this.$store.commit('changeIncomePage');//改变record页面的状态为填写收入
+      if(this.$store.state.page=="record"){
+        this.$router.push('/record');
+      }
+      if(this.$store.state.page=="detail"){
+        this.$router.push('/detail');
+      }
+     // this.$store.commit('changeIncomePage');//改变record页面的状态为填写收入
     },
      selectDetails($index){
-       this.$store.commit('changeIncomeSelected',this.incomeTable[$index]);//将选择收入方式的结果存储
-       this.$router.push('/record');
+       if(this.$store.state.page=="record"){
+         this.$store.commit('changeIncomeSelected',this.incomeTable[$index]);//将选择收入方式的结果存储
+         this.$router.push('/record');
+       }
+       if(this.$store.state.page=="detail"){
+         this.$store.commit('changeDetailSelected',this.incomeTable[$index]);//将选择收入方式的结果存储
+         this.$router.push('/detail');
+       }
      }
   },
   components:{
     XHeader
+  },
+  mounted:function(){
   }
 }
 </script>

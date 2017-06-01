@@ -18,7 +18,7 @@ const traffics=['打车','公交','地铁','加油','停车费','过路过桥','
 const shops=['服饰鞋包','家居百货','电子数码','化妆护肤','珠宝首饰','电器','家居家纺','报刊书籍','文具玩具','购物其他','烟酒','宝宝用品','保健用品','摄影文印'];
 const plays=['ktv','电影','网游电玩','电视','运动健身','洗浴足浴','茶酒咖啡','旅游度假','歌舞演出','娱乐其他','花鸟宠物','麻将棋牌','聚会玩乐'];
 const medical_educations=['医疗用品','培训考试','学杂教材','助学贷款','家教补习','挂号门诊','养生保健','住院费','养老院','学费','幼儿教育','出国留学','医教其他'];
-const families=['手机电话','电脑宽带','房款房贷','物业','住宿房租','材料建材','家政服务','快递邮政','生活其他','美发美容','保险费','消费贷款','税费手续费','漏记款','婚庆摄影','生活费'];
+const families=['水电燃气','手机电话','电脑宽带','房款房贷','物业','住宿房租','材料建材','家政服务','快递邮政','生活其他','美发美容','保险费','消费贷款','税费手续费','漏记款','婚庆摄影','生活费'];
 const invests=['证券期货','保险','出资','贵金属','投资其他','外汇','收藏品','利息支出','基金','P2P','银行存款','理财产品','余额宝','股票'];
 const human_feelings=['礼金红包','物品','慈善捐款','代付款','人情其他','请客','孝敬','给予','养老院'];
 const business=['进货采购','人工支出','材料辅料','工程付款','交通运输','运营费','会务费','办公费用','营销广告','店面租金','注册登记','生意其他'];
@@ -43,8 +43,14 @@ export default{
   },
   methods:{
     back(){
-      this.$router.push('/record');
-      this.$store.commit('changePayPage');
+      if(this.$store.state.page=="record"){
+        this.$router.push('/record');
+      }
+      if(this.$store.state.page=="detail"){
+        this.$router.push('/detail');
+      }
+
+     // this.$store.commit('changePayPage');
     },
     openDetails($index){
       var pay_menus=document.getElementById('left').getElementsByTagName('p');
@@ -74,8 +80,15 @@ export default{
         }
       }
       pay_details[$index].setAttribute('class','pay-menu details_selected');*/
-      this.$store.commit('changePaySelected',pay_details[$index].textContent);
-      this.$router.push('/record');
+      if(this.$store.state.page=="record"){
+        this.$store.commit('changePaySelected',pay_details[$index].textContent);
+        this.$router.push('/record');
+      }
+      if(this.$store.state.page=="detail"){
+        this.$store.commit('changeDetailSelected',pay_details[$index].textContent);
+        this.$router.push('/detail');
+      }
+
     }
   },
   mounted:function () {
@@ -88,6 +101,8 @@ export default{
     FlexboxItem,
     XButton,
     Scroller
+  },
+  mounted:function(){
   }
 }
 

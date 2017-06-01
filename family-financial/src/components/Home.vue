@@ -4,18 +4,32 @@
     <flexbox-item>
       <div class="flex-demo upper">
         <flexbox class="flexbox-row">
-          <flexbox-item :span="2/12"></flexbox-item>
-          <flexbox-item :span="10/12">
-            <div >
-              <img  width="25px" src="../assets/img/remind.png"/>
-              <span v-if="!isLogin" style="">欢迎您，请先<a  href="javascript:;" @click="login" >登录</a></span>
-              <span v-if="isLogin">欢迎您，{{name}}</span>
+          <flexbox-item :span="4/12">
+            <div>
+              <div style="float:left"> <span style="font-size:50px">{{nowDay}}</span></div>
+              <div style="float:left;margin-top:16px;margin-left:8px;font-size:16px;">
+                <div><span>{{nowWeek}}</span></div>
+                <div>{{nowMonth}}/<span style="">{{nowYear}}</span></div>
+              </div>
             </div>
           </flexbox-item>
-        </flexbox>
-        <flexbox class="flexbox-row">
-          <img width="25px" src="../assets/img/date.png"/>
-          <flexbox-item :span="6/12"><div>{{nowYear}}/<span style="">{{nowMonth}}</span>/{{nowDay}} {{nowWeek}}</div></flexbox-item>
+          <flexbox-item :span="8/12">
+            <div style="margin-top:18px;">
+              <box v-if="!isLogin" >
+                <x-button action-type="button" mini plain type="primary" class="custom-primary-red"  @click.native="login">登陆</x-button>
+              </box>
+              <div v-if="isLogin">
+                <a href="javascript:;" @click="personal">
+                  <div style="float: left;padding-top:3px;padding-right:5px;margin-left:80px;">
+                    <img width="25px" src="../assets/img/user.png"/>
+                  </div>
+                  <div style="float: left;">
+                    <span>{{name}}</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </flexbox-item>
         </flexbox>
         <group gutter="0" style="" >
           <cell title="本月收入" :value="nowMonthIncome"is-link @click.native="isNowMonthIncome"></cell>
@@ -106,15 +120,15 @@ export default {
       nowYear:"",//当前年
       nowWeek:"",//当前星期
       name:"",//昵称
-      nowMonthIncome:"0.00",//本月收入
-      nowMonthPay:"0.00",//本月支出
-      budgetBalance:"",//预算余额
+      nowMonthIncome:"0.0",//本月收入
+      nowMonthPay:"0.0",//本月支出
+      budgetBalance:"0.0",//预算余额
       isRecordText:"还没有记过帐",//今天是否记过帐
-      nowDayIncome:"0.00",//今天收入
-      nowDayPay:"0.00",//今天支出
+      nowDayIncome:"0.0",//今天收入
+      nowDayPay:"0.0",//今天支出
       weekRegion:"",//这周区间
-      nowWeekIncome:"0.00",//本周收入
-      nowWeekPay:"0.00",//本周支出
+      nowWeekIncome:"0.0",//本周收入
+      nowWeekPay:"0.0",//本周支出
       monthRegion:"",//这月区间
 
       //当前天图标链接
@@ -205,8 +219,9 @@ export default {
     }
   },
   mounted:function(){
+    var _this=this;
     //获取登录状态
-    this.$instance.get('loginState').then(function(response){
+    this.$instance.get('user/loginState').then(function(response){
       console.log("sss");
       console.log(response);
       console.log(response.data);
@@ -214,12 +229,12 @@ export default {
       if(response.status==200){
         if(res.code==200){
           //已登陆,获取昵称，获取今天有无记账，获取有无设置预算
-          this.isLogin=true;
-          this.$store.commit("changeLoginState",true);
+          _this.isLogin=true;
+          _this.$store.commit("changeLoginState",true);
         }else{
           //未登录
-          this.isLogin=false;
-          this.$store.commit("changeLoginState",false);
+          _this.isLogin=false;
+          _this.$store.commit("changeLoginState",false);
         }
       }
     })
@@ -230,7 +245,7 @@ export default {
     //获得今天日期显示
     var now = new Date(); //当前日期
     var nowDay = now.getDate(); //当前日
-    var nowMonth = now.getMonth()+1; //当前月
+    var nowMonth =(now.getMonth()+1)%12; //当前月
     var nowYear = now.getYear(); //当前年
     nowYear += (nowYear < 2000) ? 1900 : 0;
     var nowDayOfWeek = now.getDay(); //今天本周的第几天
@@ -249,7 +264,7 @@ export default {
     this.nowYear=nowYear;
 
     //保存当前日期
-    var todayDate;
+   var todayDate;
     if(nowMonth<10&nowDay<10){
       todayDate="0"+nowMonth+"-0"+nowDay;
     }else if(nowMonth>10&nowDay<10){
@@ -259,27 +274,35 @@ export default {
     }else{
       todayDate="0"+nowMonth+"-"+nowDay;
     }
-    this.$store.commit("setTodayDate",todayDate);
-
+    //保存到store中
+    this.$store.commit("setTodayDate",nowYear+"-"+todayDate);
 
     //获取本月本周的开始日期、结束日期
-    var monthStartDate = new Date(nowYear, nowMonth-1, 1);
+    var monthStartDate = new Date(nowYear, now.getMonth(), 1);
     var monthEndDate = new Date(nowYear, nowMonth , 1);
     var days = (monthEndDate - monthStartDate)/(1000 * 60 * 60 * 24);//当前月天数
-    var weekStartDate=new Date(nowYear, nowMonth-1, nowDay - nowDayOfWeek).getDate();
-    var weekEndDate=new Date(nowYear, nowMonth-1, nowDay + (6 - nowDayOfWeek)).getDate();
-    //显示处理
-    if(weekStartDate<10||weekEndDate<10){
+    var weekStartDate=new Date(nowYear,  now.getMonth(), nowDay - nowDayOfWeek).getDate();
+    var weekStartMonth=(new Date(nowYear,  now.getMonth(), nowDay - nowDayOfWeek).getMonth()+1)%12;
+    var weekEndDate=new Date(nowYear,  now.getMonth(), nowDay + (6 - nowDayOfWeek)).getDate();
+    var weekEndMonth=(new Date(nowYear,  now.getMonth(), nowDay + (6 - nowDayOfWeek)).getMonth()+1)%12;
+    //周区间显示处理
+    if(weekStartDate<10){
       weekStartDate="0"+weekStartDate;
+    }
+    if(weekStartMonth<10){
+      weekStartMonth="0"+weekStartMonth
+    }
+    if(weekEndDate<10){
       weekEndDate="0"+weekEndDate;
     }
+    if(weekEndMonth<10){
+      weekEndMonth="0"+weekEndMonth;
+    }
+    this.weekRegion=weekStartMonth+"月"+weekStartDate+"日-"+weekEndMonth+"月"+weekEndDate+"日"
+
+    //月区间
     if(nowMonth<10){
       this.monthRegion="0"+nowMonth+"月01日-"+"0"+nowMonth+"月"+days+"日";
-     if(weekStartDate<weekEndDate){
-       this.weekRegion="0"+nowMonth+"月"+weekStartDate+"日-"+"0"+nowMonth+"月"+weekEndDate+"日"
-     }else{
-       this.weekRegion="0"+nowMonth+"月"+weekStartDate+"日-"+"0"+(nowMonth+1).toString+"月"+weekEndDate+"日"
-     }
     }else{
       this.monthRegion=nowMonth+"月01日-"+"0"+nowMonth+"月"+days+"日";
     }
@@ -317,6 +340,18 @@ export default {
  background-image:url("../assets/img/green_bg.jpg")*/
 
 }
+  .custom-primary-red {
+    margin-left:135px;
+    border-radius: 99px!important;
+    border-color: #CE3C39!important;
+    color: #CE3C39!important;
+  &:active {
+     border-color: rgba(206, 60, 57, 0.6)!important;
+     color: rgba(206, 60, 57, 0.6)!important;
+     background-color: transparent;
+   }
+  }
+
 .flex-demo {
   height:auto;
   background-clip: padding-box;
@@ -371,4 +406,8 @@ to {left:0px;}
 from {left:0px;}
 to {left:-375px;}
 }
+
+  a:-webkit-any-link {
+    color:black;
+  }
 </style>

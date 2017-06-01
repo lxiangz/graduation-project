@@ -9,21 +9,34 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   //state 定义了应用状态的数据结构，同样可以在这里设置默认的初始状态
   state: {
+    isLoginSuccess:false,//是否已登陆
+    todayDate:"",//
+    page:"",//
+    //record页面
     paySelectedItem:'...',
     incomeSelectedItem:'...',
     isPay:true,
     buttonTabIndex:0,
-    isLoginSuccess:false,//是否已登陆
-    testCode:"",//验证码
-    cellphone:"",//登陆成功的账号手机号
-    phoneIsExist:null,//手机账号是否存在
-    isRegister:null,//是否注册成功
-    isLogin:null,//是否登陆成功
-    isSetNewPsd:null,//是否设置新密码成功
-    isChangeName:null,//是否修改昵称成功
-    isChangeTel:null,//是否修改手机号成功
-    isGetCode:null,//验证码是否发送成功
-    todayDate:"",//今天日期
+    //record的录入数据保存
+    money:"0.0",//输入金额
+    remark:"",//备注
+    selectedDate:"",//选中日期
+
+    //detail页面
+    detailSelectedItem:"全部",
+
+    //detail的页面数据保存
+    startDate:"",
+    endDate:"",
+    selectedMember:"家庭公共",
+    selectedItem:"全部",
+
+    //查询条件保存
+    checkStartDate:"",
+    checkEndDate:"",
+    checkMember:"",
+    checkItem:"",
+    checkItemDetail:"",
 
 
   },
@@ -34,148 +47,61 @@ export default new Vuex.Store({
   mutations: {
     changePaySelected(state,text){
       state.paySelectedItem=text;
-      state.buttonTabIndex=0;
-      state.isPay=true;
     },
     changeIncomeSelected(state,text){
       state.incomeSelectedItem=text;
-      state.buttonTabIndex=1;
-      state.isPay=false;
     },
-    changePayPage(state){
-      state.buttonTabIndex=0;
-      state.isPay=true;
+    changeRecordState(state,text){
+      state.money="0.0";
+      state.remark="";
+      state.selectedDate=state.todayDate
+      state.isPay=text;
     },
-    changeIncomePage(state){
-      state.buttonTabIndex=1;
-      state.isPay=false;
+    saveRecordData(state,text){
+      state.money=text.money;
+      state.remark=text.remark;
+      state.selectedDate=text.selectedDate
+    },
+    //设置今天时间
+    setTodayDate(state,text){
+      state.todayDate=text;
     },
     //改变登录状态
     changeLoginState(state,text){
       state.isLoginSuccess=text;
     },
-    //设置日期
-    setTodayDate(state,text){
-      state.todayDate=text;
+
+    //改变页面
+    changePage(state,text){
+      state.page=text;
     },
-    //请求验证码数据
-    getTestCode(state,text){
-      instance.post(
-        'sendSMS',{
-        "phone":text
-      })
-        .then(function(response){
-          console.log(response);
-          if(response.status==200){
-            var res=response.data;
-            if(res.code===200){
-              state.isGetCode=true;
-              state.testCode=res.message;
-            }else if(res.code===400){
-              state.isGetCode=false;
-            }
-          }
-        })
-        .catch(function(err){
-          console.log(err);
-        });
+    changeDetailSelected(state,text){
+      state.detailSelectedItem=text;
     },
-    //验证账号是否存在
-    confirmPhone(state,text){
-      instance.post(
-        'testPhone',{
-          phone:text
-        })
-        .then(function(response){
-          console.log(response);
-          if(response.status==200){
-            var res=response.data;
-            if(res.code==404){
-              state.phoneIsExist=false;
-            }else{
-              state.phoneIsExist=true;
-            }
-          }
-          console.log(state.phoneIsExist);
-        })
-        .catch(function(err){
-          console.log(err);
-        });
+    detailDate(state){
+      state.startDate="";
+      state.endDate="";
+      state.selectedMember="家庭公共";
+      state.selectedItem="全部";
+      state. detailSelectedItem="全部"
+    },
+    saveDetailData(state,text){
+      state.startDate=text.startDate;
+        state.endDate=text.endDate;
+        state.selectedMember=text.selectedMember;
+       state.selectedItem=text.selectedItem;
     },
 
-    //注册
-    register(state,text){
-      instance.post(
-        'register',text)
-        .then(function(response){
-          if(response.status==200){
-            var res=response.data;
-            if(res.code==404){
-              state.isRegister=false;
-            }else{
-              state.isRegister=true;
-            }
-          }
-        })
-        .catch(function(err){
-          console.log(err);
-        });
-    },
-    //登陆
-    login(state,text){
-      if(text.password==""){
-        state.isLogin=true;
-       state.cellphone=text;
-      }else{
-        //请求密码 比较密码
-        instance.post(
-          'login',{
-            phone:text.phone,
-            password:text.password
-          })
-          .then(function(response){
-            console.log(response);
-            if(response.status==200){
-              var res=response.data;
-              if(res.code==404){
-                state.isLogin=false;
-              }else{
-                state.isLogin=true;
-              }
-            }
-          })
-          .catch(function(err){
-            console.log(err);
-          });
-      }
 
-    },
-    //设置新密码
-    setNewPsd(state,text){
-      instance.post(
-        'setNewPSD',{
-          cellphone:text
-        })
-        .then(function(response){
-          console.log(response);
-          console.log(response.data);
-        })
-        .catch(function(err){
-          console.log(err);
-        });
-    },
-    //设置手机号
-    setCellPhone(state,text){
-     state.cellphone=text;
-    },
-    //修改昵称
-    setName(state,text){
-
-    },
-    //修改手机号
-    setPhone(state,text){
-
+    //查询条件
+    saveCheckOptions(state,text){
+      state.checkStartDate=text.checkStartDate;
+      state.checkEndDate=text.checkEndDate;
+      state.checkMember=text.checkMember;
+      state.checkItem=text.checkItem;
+      state.checkItemDetail=text.checkItemDetail;
     }
+
   },
   //Getters 允许组件从 Store 中获取数据
   getters: {

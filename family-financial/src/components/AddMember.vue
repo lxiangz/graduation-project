@@ -87,7 +87,7 @@ export default{
           //验证该手机账号是否存在过
          // this.$store.commit('confirmPhone',this.cellphone);
             this.$instance.post(
-              'testPhone',{
+              'user/testPhone',{
                 phone:_this.cellphone
               })
               .then(function(response){
@@ -103,7 +103,7 @@ export default{
                     //获得验证码
                    // this.$store.commit('getTestCode',this.cellphone);
                     this.$instance.post(
-                      'sendSMS',{
+                      'user/sendSMS',{
                         "phone":_this.cellphone
                       })
                       .then(function(response){
