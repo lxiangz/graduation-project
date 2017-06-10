@@ -33,9 +33,9 @@
         startDate:"",
         endDate:"",
         //成员
-        selectedMember:"家庭公共",
+        selectedMember:"全部",
         member:[""],
-        members:[['家庭公共', '好奇宝宝', '全部']],
+        members:[[]],
         isSelectMem:false,
         //收支类型
         selectedItem:"全部",
@@ -117,7 +117,7 @@
           checkStartDate:this.startDate,
           checkEndDate:this.endDate,
           checkMember:this.selectedMember,
-          checkItem:this.selectedMember,
+          checkItem:this.selectedItem,
           checkItemDetail:this.selectedItemDetails,
         });
         if(this.startDate!=""&&this.endDate!=""){
@@ -134,15 +134,66 @@
         console.log(this.selectedMember);
         console.log(this.selectedItem);
         console.log(this.selectedItemDetails);
-      //  this.$router.push("/checkdetails");
+      this.$router.push("/checkdetails");
+      },
+      //获得昵称
+      getMembers(){
+        var _this=this;
+        this.$instance.get('user/getUser').then(function(response){
+          if(response.status==200){
+            var res=response.data;
+            if(res.code===200){
+              _this.members[0].splice(0,_this.members[0].length);
+              _this.selectedMember="全部";
+              _this.members[0].push("全部","家庭公共",res.user.username)
+              //获得所有关联的成员昵称
+              _this.$instance.get('share/getAssociated').then(function(response){
+                if(response.status==200){
+                  var res=response.data;
+                  if(res.code===200){
+                    for(var i=0;i<res.list.length;i++){
+                      _this.members[0].push(res.list[i].username)
+                    }
+                    //console.log(document.getElementById(res.list[0].id))
+                    //document.getElementById(res.list[0].id).className="little-container select";
+                    //_this.cancaerId=res.list[0].id;
+                    //console.log(_this.members);
+                  }else if(res.code===404){
+                  }
+                }
+              })
+                .catch(function(err){
+                  console.log(err);
+                });
+            }else if(res.code===400){
+              console.log(res.message);
+            }
+          }
+        })
+          .catch(function(err){
+            console.log(err);
+          });
       }
     },
     mounted:function(){
+     this.getMembers();
+
+
+
       this.selectedItemDetails=this.$store.state.detailSelectedItem;
-      this.startDate=this.$store.state.startDate;
-      this.endDate=this.$store.state.endDate;
+      if(this.startDate==""){
+        this.startDate=this.$store.state.todayDate
+      }else{
+        this.startDate=this.$store.state.startDate;
+      }
+      if(this.endDate==""){
+        this.endDate=this.$store.state.todayDate
+      }else{
+        this.endDate=this.$store.state.endDate;
+      }
       this.selectedMember=this.$store.state.selectedMember;
       this.selectedItem=this.$store.state.selectedItem;
+
     }
   }
 </script>

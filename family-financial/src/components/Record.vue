@@ -80,7 +80,7 @@
           </a>
         </box>
         <box class="cost-people" v-show="!isPay">
-          <div class="little-container select " id="income.primary" @click="selectedMember">
+          <div class="little-container select " id="income-primary" @click="selectedMember">
             <a >
               <img width="56px" src="../assets/logo.png" />
               <span>{{name}}</span>

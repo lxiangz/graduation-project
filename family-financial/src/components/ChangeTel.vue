@@ -124,6 +124,10 @@ export default{
                           _this.toastText="验证码发送失败！";
                           _this.toastType="warn";
                         }
+                      }else{
+                        _this.toastShow=true;
+                        _this.toastText="验证码发送失败！";
+                        _this.toastType="warn";
                       }
                     })
                     .catch(function(err){

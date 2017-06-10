@@ -6,14 +6,14 @@
         <flexbox class="flexbox-row">
           <flexbox-item :span="4/12">
             <div>
-              <div style="float:left"> <span style="font-size:50px">{{nowDay}}</span></div>
-              <div style="float:left;margin-top:16px;margin-left:8px;font-size:16px;">
+              <div style="float:left;padding-left:20px;padding-right: 10px;"> <span style="font-size:50px">{{nowDay}}</span></div>
+              <div style="float:left;margin-top:16px;font-size:16px;">
                 <div><span>{{nowWeek}}</span></div>
                 <div>{{nowMonth}}/<span style="">{{nowYear}}</span></div>
               </div>
             </div>
           </flexbox-item>
-          <flexbox-item :span="8/12">
+          <flexbox-item :span="8/12" style="margin-left:0">
             <div style="margin-top:18px;">
               <box v-if="!isLogin" >
                 <x-button action-type="button" mini plain type="primary" class="custom-primary-red"  @click.native="login">登陆</x-button>
@@ -51,22 +51,22 @@
         <cell title="今天" :inline-desc="isRecordText"  is-link @click.native="isNowDay" >
           <img slot="icon" width="40px" style="display:block; margin-right:5px;" :src="todayIconSrc" />
           <div slot="default">
-            <span style="color:red">{{nowDayIncome}}</span><br/>
-            <span style="color:green">{{nowDayPay}}</span>
+            <span style="color:red">-{{nowDayPay}}</span><br/>
+            <span style="color:green">+{{nowDayIncome}}</span>
           </div>
         </cell>
         <cell title="本周" :inline-desc="weekRegion"  is-link @click.native="isNowWeek">
           <img slot="icon" width="40px" style="display:block; margin-right:5px;" :src="weekIconSrc" />
           <div slot="default">
-            <span style="color:red">{{nowWeekIncome}}</span><br/>
-            <span style="color:green">{{nowWeekPay}}</span>
+            <span style="color:red">-{{nowWeekPay}}</span><br/>
+            <span style="color:green">+{{nowWeekIncome}}</span>
           </div>
         </cell>
         <cell title="本月" :inline-desc="monthRegion"  value="0.00" is-link @click.native="isNowMonth">
           <img slot="icon" width="40px" style="display:block; margin-right:5px;" :src="monthIconSrc" />
           <div slot="default">
-            <span style="color:red">{{nowMonthIncome}}</span><br/>
-            <span style="color:green">{{nowMonthPay}}</span>
+            <span style="color:red">-{{nowMonthPay}}</span><br/>
+            <span style="color:green">+{{nowMonthIncome}}</span>
           </div>
         </cell>
         <cell title="社区" inline-desc="跟大神一起学记账"  is-link @click.native="sociation">
@@ -110,11 +110,14 @@
 </template>
 
 <script type="es6">
+
+
 import { Flexbox, FlexboxItem,Cell,Group,XButton,Box,Tabbar, TabbarItem,Badge,Toast} from 'vux'
 export default {
   data(){
     return{
       isLogin:false,//是否登录
+      todayYearDate:"",
       nowDay:"",//当前日
       nowMonth:"",//当前月
       nowYear:"",//当前年
@@ -127,9 +130,13 @@ export default {
       nowDayIncome:"0.0",//今天收入
       nowDayPay:"0.0",//今天支出
       weekRegion:"",//这周区间
+      weekStart:"",
+      weekEnd:"",
       nowWeekIncome:"0.0",//本周收入
       nowWeekPay:"0.0",//本周支出
       monthRegion:"",//这月区间
+      monthStart:"",
+      monthEnd:"",
 
       //当前天图标链接
       todayIconSrc:"",
@@ -145,16 +152,36 @@ export default {
   },
   methods:{
     list(){
-       this.$router.push('/record');
+      if(this.isLogin){
+        this.$router.push('/record');
+      }else{
+        this.toastText="您还未登录，不能记录！";
+        this.toastType="warn";
+        this.toastShow=true;
+      }
     },
     login(){
      this.$router.push("/login");
     },
     personal(){
-      this.$router.push('/personal');
+      if(this.isLogin){
+        this.$router.push('/personal');
+      }else{
+        this.toastText="您还未登录，不能查看个人信息！";
+        this.toastType="warn";
+        this.toastShow=true;
+      }
+
     },
     detail(){
+      if(this.isLogin){
         this.$router.push('/detail');
+      }else{
+        this.toastText="您还未登录，不能查看明细！";
+        this.toastType="warn";
+        this.toastShow=true;
+      }
+
     },
     table(){
       this.$router.push('/table');
@@ -165,7 +192,15 @@ export default {
     //权限设置
     isNowMonthIncome(){
       if(this.isLogin){
-        this.$router.push('/record');
+        //保存查询条件
+        this.$store.commit("saveCheckOptions",{
+          checkStartDate:this.nowYear+"-"+this.monthStart,
+          checkEndDate:this.nowYear+"-"+this.monthEnd,
+          checkMember:this.name,
+          checkItem:"收入",
+          checkItemDetail:"全部",
+        });
+        this.$router.push('/checkdetails');
       }else{
         this.toastText="您还未登录，不能查看本月收入！";
         this.toastType="warn";
@@ -174,7 +209,15 @@ export default {
     },
     isNowMonthPay(){
       if(this.isLogin){
-        this.$router.push('/record');
+        //保存查询条件
+        this.$store.commit("saveCheckOptions",{
+          checkStartDate:this.nowYear+"-"+this.monthStart,
+          checkEndDate:this.nowYear+"-"+this.monthEnd,
+          checkMember:this.name,
+          checkItem:"支出",
+          checkItemDetail:"全部",
+        });
+        this.$router.push('/checkdetails');
       }else{
         this.toastText="您还未登录，不能查看本月支出！";
         this.toastType="warn";
@@ -183,7 +226,7 @@ export default {
     },
     isBudget(){
       if(this.isLogin){
-        this.$router.push('/record');
+        this.$router.push('/budget');
       }else{
         this.toastText="您还未登录，不能查看预算！";
         this.toastType="warn";
@@ -192,7 +235,15 @@ export default {
     },
     isNowDay(){
       if(this.isLogin){
-        this.$router.push('/record');
+        //保存查询条件
+        this.$store.commit("saveCheckOptions",{
+          checkStartDate:this.todayYearDate,
+          checkEndDate:this.todayYearDate,
+          checkMember:this.name,
+          checkItem:"全部",
+          checkItemDetail:"全部",
+        });
+        this.$router.push('/checkdetails');
       }else{
         this.toastText="您还未登录，不能查看今天账单！";
         this.toastType="warn";
@@ -201,7 +252,15 @@ export default {
     },
     isNowWeek(){
       if(this.isLogin){
-        this.$router.push('/record');
+        //保存查询条件
+        this.$store.commit("saveCheckOptions",{
+          checkStartDate:this.nowYear+"-"+this.weekStart,
+          checkEndDate:this.nowYear+"-"+this.weekEnd,
+          checkMember:this.name,
+          checkItem:"全部",
+          checkItemDetail:"全部",
+        });
+        this.$router.push('/checkdetails');
       }else{
         this.toastText="您还未登录，不能查看本周账单！";
         this.toastType="warn";
@@ -210,7 +269,15 @@ export default {
     },
     isNowMonth(){
       if(this.isLogin){
-        this.$router.push('/record');
+        //保存查询条件
+        this.$store.commit("saveCheckOptions",{
+          checkStartDate:this.nowYear+"-"+this.monthStart,
+          checkEndDate:this.nowYear+"-"+this.monthEnd,
+          checkMember:this.name,
+          checkItem:"全部",
+          checkItemDetail:"全部",
+        });
+        this.$router.push('/checkdetails');
       }else{
         this.toastText="您还未登录，不能查看本月账单！";
         this.toastType="warn";
@@ -219,6 +286,7 @@ export default {
     }
   },
   mounted:function(){
+    this.$router.push("/personal");
     var _this=this;
     //获取登录状态
     this.$instance.get('user/loginState').then(function(response){
@@ -231,6 +299,36 @@ export default {
           //已登陆,获取昵称，获取今天有无记账，获取有无设置预算
           _this.isLogin=true;
           _this.$store.commit("changeLoginState",true);
+          //获取信息显示
+          _this.$instance.get('home/getHome').then(function(response){
+            console.log("sss");
+            console.log(response);
+            console.log(response.data);
+            var res=response.data;
+            if(response.status==200){
+              if(res.code==200){
+                _this.name=res.username;
+                _this.nowMonthIncome=res.nowMonthIncome;
+                _this.nowMonthPay=res.nowMonthPay;
+                _this.budgetBalance=res.budgetBalance;
+                _this.nowDayIncome=res.nowDayIncome;
+                _this.nowDayPay=res.nowDayPay;
+                if(res.recordText){
+                  _this.isRecordText="今天已经有记过帐了哦";
+                }else{
+                  _this.isRecordText="还没有记过帐";
+                }
+
+                _this.nowWeekIncome=res.nowWeekIncome;
+                _this.nowWeekPay=res.nowWeekPay;
+              }else{
+              }
+            }
+          })
+            .catch(function(err){
+              console.log(err);
+            });
+
         }else{
           //未登录
           _this.isLogin=false;
@@ -264,7 +362,7 @@ export default {
     this.nowYear=nowYear;
 
     //保存当前日期
-   var todayDate;
+    var todayDate;
     if(nowMonth<10&nowDay<10){
       todayDate="0"+nowMonth+"-0"+nowDay;
     }else if(nowMonth>10&nowDay<10){
@@ -275,7 +373,8 @@ export default {
       todayDate="0"+nowMonth+"-"+nowDay;
     }
     //保存到store中
-    this.$store.commit("setTodayDate",nowYear+"-"+todayDate);
+    this.todayYearDate=nowYear+"-"+todayDate;
+    this.$store.commit("setTodayDate",this.todayYearDate);
 
     //获取本月本周的开始日期、结束日期
     var monthStartDate = new Date(nowYear, now.getMonth(), 1);
@@ -299,22 +398,28 @@ export default {
       weekEndMonth="0"+weekEndMonth;
     }
     this.weekRegion=weekStartMonth+"月"+weekStartDate+"日-"+weekEndMonth+"月"+weekEndDate+"日"
+    this.weekStart=weekStartMonth+"-"+weekStartDate
+    this.weekEnd=weekStartMonth+"-"+weekEndDate
 
     //月区间
     if(nowMonth<10){
       this.monthRegion="0"+nowMonth+"月01日-"+"0"+nowMonth+"月"+days+"日";
+      this.monthStart="0"+nowMonth+"-01";
+      this.monthEnd="0"+nowMonth+"-"+days
     }else{
-      this.monthRegion=nowMonth+"月01日-"+"0"+nowMonth+"月"+days+"日";
+      this.monthRegion=nowMonth+"月01日-"+nowMonth+"月"+days+"日";
+      this.monthStart=nowMonth+"-01";
+      this.monthEnd=nowMonth+"-"+days
     }
 
     //设置日期图标
     if(nowDay<10){
-      this.todayIconSrc="../../static/img/0"+nowDay+".png";
+      this.todayIconSrc=require("../../static/img/0"+nowDay+".png");
     }else{
-      this.todayIconSrc="../../static/img/"+nowDay+".png";
+      this.todayIconSrc=require("../../static/img/"+nowDay+".png");
     }
-    this.monthIconSrc="../../static/img/month"+nowMonth+".png";
-    this.weekIconSrc="../../static/img/week"+nowDayOfWeek+".png";
+    this.monthIconSrc=require("../../static/img/month"+nowMonth+".png");
+    this.weekIconSrc=require("../../static/img/week"+nowDayOfWeek+".png");
   },
   components: {
     Flexbox,
@@ -358,7 +463,6 @@ export default {
 }
 .flexbox-row{
   font-size:18px;
-padding:2px 20px;
 }
 .record{
   padding:10px 0;

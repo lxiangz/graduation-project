@@ -103,6 +103,9 @@
                             _this.toastShow=true;
                             _this.toastText="验证码发送失败！";
                           }
+                        }else if(response.status==500){
+                          _this.toastShow=true;
+                          _this.toastText="验证码发送失败！";
                         }
                       })
                       .catch(function(err){
@@ -150,7 +153,7 @@
                  //发送请求
                  // 注册成功，直接登陆
                  _this.$instance.post(
-                   'user/register',{phone:this.cellphone,password:md5Psd})
+                   'user/register',{phone:this.cellphone,password:md5Psd,code:this.testCode})
                    .then(function(response){
                      if(response.status==200){
                        var res=response.data;
@@ -166,6 +169,9 @@
                            _this.$router.push("/login");
                          },3000)
                        }
+                     }else{
+                       _this.toastShow = true;
+                       _this.toastText = "注册失败！";
                      }
                    })
                    .catch(function(err){

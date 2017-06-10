@@ -81,7 +81,7 @@ export default new Vuex.Store({
     detailDate(state){
       state.startDate="";
       state.endDate="";
-      state.selectedMember="家庭公共";
+      state.selectedMember="全部";
       state.selectedItem="全部";
       state. detailSelectedItem="全部"
     },
