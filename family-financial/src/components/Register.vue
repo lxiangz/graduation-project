@@ -34,13 +34,15 @@
   export default{
     data(){
       return {
+        //文本框绑定数据
         cellphone: "",
         testCode: "",
         password: "",
+        isGetCode: false,//控制按钮是否允许点击，disabled属性绑定数据
+        getCodeText: "获取验证码",//获取验证码按钮文字
+        //提示框信息
         toastShow: false,
         toastText: "",
-        isGetCode: false,
-        getCodeText: "获取验证码",
         textShow: false,
         text: "",
         textType:"text"
@@ -50,10 +52,10 @@
     methods: {
       //一分钟后可再次点击获取验证码按钮
       setClickAgain(){
-        this.isGetCode = true;
+        this.isGetCode = true;//控制按钮是否允许点击，disabled属性绑定数据
         var time = 60;
         var _this = this;
-        //每一秒改变按钮text
+        //每一秒改变按钮text（_this.getCodeText）
         var setText = window.setInterval(function () {
           _this.getCodeText = (time--).toString() + "秒后可重新发送";
           //去掉定时器的方法
@@ -65,34 +67,27 @@
         }, 1000);
       },
       getCode(){
-        //验证是否为空
-        var _this=this;
+        var _this=this;//在请求方法内this.作用域改变
+        //验证手机号格式，this.cellphone获取用户输入的数据
         if (this.cellphone === "") {
           this.toastShow = true;
           this.toastText = "手机号不能为空";
         } else {
-          //验证手机号吗格式是否正确
           var tel = /^(13[0-9]|14[5|7]|15[0|1|2|3|4|5|6|7|8|9]|18[0|1|2|3|4|5|6|7|8|9])\d{8}$/;
-          var re = new RegExp(tel);
+          var re = new RegExp(tel);//验证手机号吗格式是否正确
           if (re.test(this.cellphone)) {
-            //验证手机号是否已注册过
-            _this.$instance.post(
-              'user/testPhone',{
-                phone:_this.cellphone
-              })
+            _this.$instance.post( //发送请求，验证手机号是否已注册过
+              'user/testPhone',{phone:_this.cellphone})
               .then(function(response){
                 console.log(response);
                 if(response.status==200){
                   var res=response.data;
                   if(res.code==404){
-                    //state.phoneIsExist=false;
                     //一分钟后可再次点击获取验证码按钮
                     _this.setClickAgain();
-                    //获得验证码
+                    //未注册过，获得验证码
                     _this.$instance.post(
-                      'user/sendSMS',{
-                        "phone":_this.cellphone
-                      })
+                      'user/sendSMS',{"phone":_this.cellphone})
                       .then(function(response){
                         console.log(response);
                         if(response.status==200){
@@ -111,9 +106,7 @@
                       .catch(function(err){
                         console.log(err);
                       });
-                   // _this.$store.commit('getTestCode',_this.cellphone);
                   }else{
-                    //state.phoneIsExist=true;
                     _this.toastShow=true;
                     _this.toastText="该手机号已注册过";
                   }
@@ -132,27 +125,24 @@
       //测试完成
       completed(){
         var _this=this;
-        //验证验证码不为空且正确
+        //验证验证码不为空且正确，this.testCode获取用户输入的验证码
         if(this.testCode==""){
           this.toastShow = true;
           this.toastText = "验证码不能为空！";
         }else{
-          //验证验证码是否正确
+          //验证验证码是否正确，this.code获取发送验证码成功后的验证码
           if(this.testCode==this.code){
-             //验证码正确时验证密码
+             //验证码正确时验证密码，this.password获取用户输入的密码
              if(this.password==""){
                this.toastShow = true;
                this.toastText = "密码不能为空！";
              }else{
-               //验证密码格式是否正确(长度在6-16位,由字母、数字、特殊符号组成)
+               //验证密码格式是否正确(长度在6-16位,必须由字母、数字、特殊符号组成)
                var psd = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[~!@#$%^&*()_+`\-={}:";'<>?,.\/]).{6,16}$/;
                var re = new RegExp(psd);
                if(re.test(this.password)){
-                 //密码加密
-                 var md5Psd=hex_md5(this.password);
-                 //发送请求
-                 // 注册成功，直接登陆
-                 _this.$instance.post(
+                 var md5Psd=hex_md5(this.password);//密码加密
+                 _this.$instance.post(  // 发送请求，注册成功，直接登陆
                    'user/register',{phone:this.cellphone,password:md5Psd,code:this.testCode})
                    .then(function(response){
                      if(response.status==200){

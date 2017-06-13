@@ -31,6 +31,7 @@ export default{
     return{
       newPSD:"",
       againPSD:"",
+      //提示框属性数据
       toastShow:false,
       toastText:"",
       textShow:false,

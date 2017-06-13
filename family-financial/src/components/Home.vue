@@ -4,16 +4,16 @@
     <flexbox-item>
       <div class="flex-demo upper">
         <flexbox class="flexbox-row">
-          <flexbox-item :span="4/12">
+          <flexbox-item :span="5/12">
             <div>
               <div style="float:left;padding-left:20px;padding-right: 10px;"> <span style="font-size:50px">{{nowDay}}</span></div>
-              <div style="float:left;margin-top:16px;font-size:16px;">
+              <div style="float:left;font-size:16px;margin-top:16px;">
                 <div><span>{{nowWeek}}</span></div>
                 <div>{{nowMonth}}/<span style="">{{nowYear}}</span></div>
               </div>
             </div>
           </flexbox-item>
-          <flexbox-item :span="8/12" style="margin-left:0">
+          <flexbox-item :span="7/12" style="margin-left:0">
             <div style="margin-top:18px;">
               <box v-if="!isLogin" >
                 <x-button action-type="button" mini plain type="primary" class="custom-primary-red"  @click.native="login">登陆</x-button>
@@ -110,8 +110,6 @@
 </template>
 
 <script type="es6">
-
-
 import { Flexbox, FlexboxItem,Cell,Group,XButton,Box,Tabbar, TabbarItem,Badge,Toast} from 'vux'
 export default {
   data(){
@@ -137,13 +135,9 @@ export default {
       monthRegion:"",//这月区间
       monthStart:"",
       monthEnd:"",
-
-      //当前天图标链接
-      todayIconSrc:"",
-      //当前月图标链接
-      monthIconSrc:"",
-      //当前星期几图标
-      weekIconSrc:"",
+      todayIconSrc:"",  //当前天图标链接
+      monthIconSrc:"",//当前月图标链接
+      weekIconSrc:"", //当前星期几图标
       //提示弹框属性
       toastShow:false,
       toastType:"warn",
@@ -286,24 +280,16 @@ export default {
     }
   },
   mounted:function(){
-    this.$router.push("/personal");
     var _this=this;
+  this.$router.push("personal");
     //获取登录状态
     this.$instance.get('user/loginState').then(function(response){
-      console.log("sss");
-      console.log(response);
-      console.log(response.data);
       var res=response.data;
       if(response.status==200){
-        if(res.code==200){
-          //已登陆,获取昵称，获取今天有无记账，获取有无设置预算
+        if(res.code==200){ //已登陆,获取昵称，获取今天有无记账，获取有无设置预算
           _this.isLogin=true;
-          _this.$store.commit("changeLoginState",true);
-          //获取信息显示
-          _this.$instance.get('home/getHome').then(function(response){
-            console.log("sss");
-            console.log(response);
-            console.log(response.data);
+          _this.$store.commit("changeLoginState",true);//改变状态管理中登陆状态
+          _this.$instance.get('home/getHome').then(function(response){ //获取信息显示
             var res=response.data;
             if(response.status==200){
               if(res.code==200){
@@ -318,17 +304,14 @@ export default {
                 }else{
                   _this.isRecordText="还没有记过帐";
                 }
-
                 _this.nowWeekIncome=res.nowWeekIncome;
                 _this.nowWeekPay=res.nowWeekPay;
-              }else{
-              }
+              }else{}
             }
           })
             .catch(function(err){
               console.log(err);
             });
-
         }else{
           //未登录
           _this.isLogin=false;

@@ -8,12 +8,12 @@
       <cell title="帐单明细" is-link @click.native="showDetails"></cell>
     </group>
       <!--柱形图-->
-      <div id="column" style="height:250px;width:375px;display:none;margin-top:10px;">
+      <div id="column" style="height:250px;width:350px;display:none;margin-top:10px;">
 
       </div>
     <!--以图形显示-->
     <div id="pie-data" style="display:none">
-      <div id="pie"  style="height:250px;width:295px;float: left">
+      <div id="pie"  style="height:250px;width:285px;float: left">
 
       </div>
       <div style="float: left;height:250px;width:75px;padding-top: 20px;">
@@ -35,8 +35,8 @@
   export default{
     data(){
       return{
-        pieType:'支出',
-        pieTypeOptions:['支出','收入'],
+        pieType:'支出',//当前饼状图显示的收支类型
+        pieTypeOptions:['支出','收入'],//可选择的饼状图显示收支类型
       }
     },
     methods:{
@@ -157,11 +157,6 @@
       var member=this.$store.state.checkMember;
       var item=this.$store.state.checkItem;
       var itemDetail=this.$store.state.checkItemDetail;
-      console.log(startDate);
-      console.log(endDate);
-      console.log(member);
-      console.log(item);
-      console.log(itemDetail);
 
       if(item=="支出"){
         this.pieType="支出";
@@ -175,9 +170,78 @@
         this.pieType="支出";
         this.pieTypeOptions=['支出','收入'];
       }
+//模拟
+      // 绘制柱形图
+      columnChart.setOption({
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        legend: {
+          data: ['收入', '支出']
+        },
+        grid: {
+          left: '2%',
+          right: '6%',
+          bottom: '3%',
+          top:'13%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'value',
+          boundaryGap: [0, 0.01]
+        },
+        yAxis: {
+          type: 'category',
+          data:["sss","ddd"],
+        },
+        series: [
+          {
+            name: '收入',
+            type: 'bar',
+            data: [50,100],
+          },
+          {
+            name: '支出',
+            type: 'bar',
+            data:[0,20],
+          }
+        ]
+      });
+      pieChart.setOption({
+        series : [
+          {
+            name: '访问来源',
+            type: 'pie',
+            radius: '65%',
+            grid: {
+              left: '2%',
+              right: '6%',
+              bottom: '3%',
+              top:'13%',
+              containLabel: true
+            },
+            roseType: 'angle',
+            data:[
+              {value:235, name:'餐饮'},
+              {value:274, name:'交通'},
+              {value:310, name:'购物'},
+              {value:0, name:'人情0'},
+              {value:335, name:'娱乐'},
+              {value:200, name:'医教'},
+              {value:400, name:'居家'},
+              {value:0, name:'投资0'},
+              {value:400, name:'生意'}
+            ]
+          }
+        ]
+      });
+
 
       //请求数据
-      this.$instance.post('bill/getBarData',{
+     this.$instance.post('bill/getBarData',{
         startDay:startDate,
         endDay:endDate,
         member:member,
@@ -187,8 +251,6 @@
         if(response.status==200){
           var res=response.data;
           if(res.code===200){
-           console.log(response);
-// 绘制柱形图
             columnChart.setOption({
               tooltip: {
                 trigger: 'axis',
@@ -226,10 +288,8 @@
                   data: res.pays,
                 }
               ]
-            });
-          }else if(res.code===404){
-
-          }
+            });//将请求到的数据绘制柱形图
+          }else if(res.code===404){}
         }
       })
         .catch(function(err){
@@ -274,7 +334,7 @@
                   ]
                 }
               ]
-            });
+            });//有数据时直接根据数据绘制
           }else if(res.code===404){
             pieChart.setOption({
               series : [
@@ -295,7 +355,7 @@
                   ]
                 }
               ]
-            });
+            });//无数据时显示无数据
           }
         }
       })

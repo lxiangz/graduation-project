@@ -19,7 +19,7 @@
 export default{
   data(){
     return{
-      name:"",
+      name:"",//文本框输入数据
       toastShow:false,
       toastText:"",
       toastType:"warn"
@@ -39,14 +39,11 @@ export default{
         this.toastType="warn";
       }else if(this.name.length<10){
         //修改昵称
-       // this.$store.commit("setName",name);
         this.$instance.post(
           'user/update',{
             username:_this.name
           })
           .then(function(response){
-            console.log(response);
-            console.log(response.data);
             if(response.status==200){
               var res=response.data;
               if(res.code==200){

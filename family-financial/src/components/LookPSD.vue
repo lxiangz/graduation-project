@@ -30,8 +30,8 @@ export default{
     return{
       cellphone:"",
       testCode:"",
-      isGetCode:false,
-      getCodeText:"获取验证码",
+      isGetCode:false,//s是否允许获取验证码
+      getCodeText:"获取验证码",//获取验证码按钮文字
       toastShow:false,
       toastText:"",
     }

@@ -37,8 +37,8 @@
     </toast>
 
     <box gap="0px 15px" >
-      <x-button style="width:165px;font-size: 16px;margin:0 3px;" type="primary" plain  mini action-type="button" @click.native="register">注册</x-button>
-      <x-button style="width:165px;font-size: 16px;" type="primary" mini action-type="button" @click.native="login">登陆</x-button>
+      <x-button style="width:145px;font-size: 16px;margin:0 3px;" type="primary" plain  mini action-type="button" @click.native="register">注册</x-button>
+      <x-button style="width:145px;font-size: 16px;" type="primary" mini action-type="button" @click.native="login">登陆</x-button>
     </box>
     <div class="forget-psd">
       <a href="javascript:;" v-on:click="lookPSD">忘记密码？</a>
@@ -53,7 +53,7 @@
   export default{
     data(){
       return {
-        cellphone: "",
+        cellphone: "",//文本框绑定数据
         password: "",
         toastShow: false,
         toastText: "",
@@ -107,16 +107,13 @@
                         password:md5Psd
                       })
                       .then(function (response) {
-                        console.log(response);
                         if (response.status == 200) {
                           var res = response.data;
                           if (res.code == 404) {
-                            //state.isLogin=false;
                             _this.toastShow = true;
                             _this.toastText = res.message;
                             _this.toastType = "warn";
-                          } else {
-                            // 登陆成功
+                          } else { // 登陆成功
                             _this.toastShow = true;
                             _this.toastText = "登陆成功，将直接转到主页";
                             _this.toastType = "default";
@@ -185,7 +182,7 @@
   .forget-psd{
     font-size:x-small;
     color:grey;
-    padding:10px 10px 0 305px;
+    padding:10px 10px 0 285px;
   }
   a:-webkit-any-link {
     color:black;

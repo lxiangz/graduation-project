@@ -97,7 +97,7 @@ export default [
       {
         path:'/showdetails',
         component:showdetails
-      },
+      }
     ]
   }
 ]

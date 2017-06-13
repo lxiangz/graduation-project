@@ -44,16 +44,18 @@
 export default{
   data(){
     return{
-      cellphone:"",
-      testCode:"",
-      isGetCode:false,
+      cellphone:"",//输入手机号
+      testCode:"",//输入验证码
+      isGetCode:false,//获取验证码是否允许点击
+      getCodeText:"获取验证码",//获取验证码按钮文字
+      show:false,//密码确认框是否显示
+      password:"",//输入密码
+      isRight:false,//密码是否确认正确
+
       toastShow:false,
       toastText:"",
-      getCodeText:"获取验证码",
       toastType:"warn",
-      show:false,
-      password:"",
-      isRight:false,//密码是否正确
+
     }
   },
   mounted: function () {

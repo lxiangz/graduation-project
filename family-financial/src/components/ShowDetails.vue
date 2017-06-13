@@ -39,8 +39,8 @@
   export default{
     data(){
       return{
-        isDelete:false,
-        details:[
+        isDelete:false,//删除确认框是否显示
+        details:[//time 具体天 content 具体天内容  text：记录内容显示 member：记录成员   id：记录id（通过此di删除） isShow：是否显示删除图标
           {time:"2017-05-21", content:[{text:"午餐支出20元",member:"好奇宝宝", id:"21",isShow:true}, {text:"工资薪水收入2000元",member:"家庭公共", id:"2f",isShow:false}]},
           {time:"2017-05-26", content:[ {text:"无数据",member:"", id:"",isShow:false}]},
         ]

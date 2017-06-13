@@ -43,15 +43,15 @@
 export default{
   data(){
     return{
-      cellphone:"",
-      testCode:"",
-      getCodeText:"获取验证码",
-      isGetCode:false,
+      cellphone:"",//输入手机号
+      testCode:"",//输入验证码
+      getCodeText:"获取验证码",//获取验证码按钮文字
+      isGetCode:false,//获取验证码按钮是否允许点击
+      cancerId:"",//取消关联id
+      members:[{username:"好奇宝宝",id:"21"}],//显示已关联账号数据结构
       toastShow:false,
       toastType:"warn",
       toastText:"",
-      cancerId:"",//取消关联id
-      members:[]
     }
   },
   methods:{
@@ -191,9 +191,7 @@ export default{
       divs[i].className="little-container";
     }
     document.getElementById(this.members[index].id).className="little-container select"
-
-    this.cancerId=this.members[index].id;
-    console.log( this.cancerId);
+    this.cancerId=this.members[index].id;//获取选择的成员的取消id
   },
     //显示关联手机号
     reload(){
@@ -203,24 +201,17 @@ export default{
       this.$instance.get('share/getAssociated').then(function(response){
         if(response.status==200){
           var res=response.data;
-          console.log(res);
-          if(res.code===200){
-           _this.members.splice(0,_this.members.length);
+          if(res.code===200){//设置当前组件绑定数据members
+           _this.members.splice(0,_this.members.length);//清空当前数据
             if(res.list.length>0){
               for(var i=res.list.length-1;i>=0;i--){
-                _this.members.unshift(res.list[i])
+                _this.members.unshift(res.list[i])//更新
               }
-              document.getElementById("no-cancer-text").style.display="none";
+              document.getElementById("no-cancer-text").style.display="none";//设置无关联账号信息是否信息
             }else{
               document.getElementById("no-cancer-text").style.display="block";
             }
-            console.log(_this.members);
-            //console.log(document.getElementById(res.list[0].id))
-            //document.getElementById(res.list[0].id).className="little-container select";
-            //_this.cancaerId=res.list[0].id;
-            //console.log(_this.members);
           }else if(res.code===404){
-
           }
         }
       })
@@ -243,7 +234,6 @@ export default{
         ).then(function(response){
           if(response.status==200){
             var res=response.data;
-            console.log(response);
             if(res.code===200){
               _this.toastShow=true;
               _this.toastText="取消关联成功！";

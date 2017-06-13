@@ -15,17 +15,17 @@
           <span style="color:black" slot="label">金额：</span>
         </x-input>
       </group>
-      <box v-show="isPay" id="pay-btns" style="padding:0 16px 15px 16px;">
-        <x-button  mini plain class="select-btn" id="fruit" @click.native="selected">饮料水果</x-button>
+      <box v-show="isPay" id="pay-btns" style="padding:0 6px 10px 6px;">
+        <x-button  mini  plain class="select-btn" id="fruit" @click.native="selected">饮料水果</x-button>
         <x-button  mini plain id="vege" @click.native="selected">买菜原料</x-button>
         <x-button  mini plain id="water" @click.native="selected">水电燃气</x-button>
         <x-button  mini plain id="morning" @click.native="selected">早餐</x-button>
         <x-button  mini plain id="lunch" @click.native="selected">午餐</x-button>
         <x-button  mini plain id="dinner" @click.native="selected">晚餐</x-button>
         <x-button  mini plain id="pay-more" @click.native="selected"  style="min-width:87px">{{paySelectedItem}}</x-button>
-        <x-button style="margin-left:39px;"  mini plain  @click.native="payMore" >更多&nbsp;></x-button>
+        <x-button style="margin-left:43px;"  mini plain  @click.native="payMore" >更多&nbsp;></x-button>
       </box>
-      <box v-show="!isPay" id="income-btns" style="padding:0 16px 15px 16px;">
+      <box v-show="!isPay" id="income-btns" style="padding:0 6px 10px 6px;">
         <x-button  mini plain  id="mon-income" @click.native="selected">工资薪水</x-button>
         <x-button  mini plain id="two-job" @click.native="selected">兼职外快</x-button>
         <x-button  mini plain id="welfare" @click.native="selected">福利补贴</x-button>
@@ -33,7 +33,7 @@
         <x-button  mini plain id="red-bag" @click.native="selected">红包</x-button>
         <x-button  mini plain id="award" @click.native="selected">奖金</x-button>
         <x-button  mini plain id="income-more" @click.native="selected"  style="min-width:87px">{{incomeSelectedItem}}</x-button>
-        <x-button style="margin-left:39px;"  mini plain  @click.native="incomeMore" >更多&nbsp;></x-button>
+        <x-button style="margin-left:43px;"  mini plain  @click.native="incomeMore" >更多&nbsp;></x-button>
       </box>
       <group gutter="0">
         <x-input style="padding:5px 15px"  placeholder="..." v-model="remark" :show-clear=false>
@@ -101,20 +101,17 @@ import { XHeader,ButtonTab, ButtonTabItem,Icon,Group,XInput,XButton,Box,Cell,Inl
 export default{
   data(){
     return{
-      isLogin:false,
-      current:"record",
-      isPay:true,
+      isPay:true,//是支出还是收入
       money:"0.0",//输入金额
       remark:"",//备注
       showDate:false,//是否显示选择时间组件
       selectedDate:"",//选中日期
-      paySelectedItem:"...",
-      incomeSelectedItem:"...",
-      member:"家庭公共",
+      paySelectedItem:"...",//更多支出项
+      incomeSelectedItem:"...",//更多收入项
+      member:"家庭公共",//选中成员
       name:"好奇宝宝",//昵称
       type:"",//支出或收入
-      //收入或支出原因
-      recordReason:"",
+      recordReason:"",//更多收支项
 
       //警告信息
       toastShow:false,
@@ -234,11 +231,6 @@ export default{
     },
     record(){
       var _this=this;
-      console.log(this.money);
-      console.log(this.recordReason);
-      console.log(this.remark);
-      console.log(this.selectedDate);
-      console.log(this.member);
       if(this.isPay){
         this.type="支出";
         console.log("支出")
@@ -248,7 +240,7 @@ export default{
       }
      var num =/^(([1-9]{1}\d*)|([0]{1}))(\.(\d){1,1})?$/;
       var re = new RegExp(num);
-      if(this.money==""){
+      if(this.money==""){//this.money获取用户输入的金额
         this.toastShow=true;
         this.toastType="warn";
         this.toastText="金额不能为空";
@@ -275,7 +267,6 @@ export default{
               _this.toastText="记账成功";
               _this.money="0.0";
             }else if(res.code===404){
-
             }
           }
         })
@@ -305,13 +296,13 @@ export default{
   },
   mounted:function () {
     //状态
-    this.paySelectedItem=this.$store.state.paySelectedItem;
-    this.incomeSelectedItem=this.$store.state.incomeSelectedItem;
-    this.isPay=this.$store.state.isPay;
-    this.money=this.$store.state.money;
-    this.remark=this.$store.state.remark;
+    this.paySelectedItem=this.$store.state.paySelectedItem;//更多支出项
+    this.incomeSelectedItem=this.$store.state.incomeSelectedItem;//更多收入项
+    this.isPay=this.$store.state.isPay;//收入or支出项
+    this.money=this.$store.state.money;//金额
+    this.remark=this.$store.state.remark;//备注
     //获取日期
-    if(this.$store.state.selectedDate==""){
+    if(this.$store.state.selectedDate==""){//日期
       this.selectedDate=this.$store.state.todayDate;
     }else{
       this.selectedDate=this.$store.state.selectedDate;

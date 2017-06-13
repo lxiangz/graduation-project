@@ -81,13 +81,15 @@ export default{
       isSaveShow:false,//修改确认框是否显示
       isShow:false,//预算项选择框是否显示
       payItem:["餐饮"],//当前选择的某一预算项
-      payItems:[['餐饮', '交通', '购物', '娱乐', '医教', '居家', '投资', '人情', '生意']],//全部预算项
+      payItems:[['餐饮', '交通', '购物', '娱乐', '医教', '居家', '投资', '人情', '生意']],//修改预时可选择的全部预算项
       payItemText:"餐饮金额：",
-      //每一项预算百分比、余额、预算
+      //每一项预算百分比、余额、预算，数据结构
       budgetDetail:[
-        {name:"餐饮",budget: "0.0",percent:0,balance: "0",img:"../../static/img/food.png"},{name:"交通",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/traffic.png"},{name:"购物",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/shop.png"},
-        {name:"娱乐",budget: "0.0",percent:0,balance: "0",img:"../../static/img/play.png"}, {name:"医教",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/hospital.png"},{name:"居家",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/home.png"},
-        {name:"投资",budget: "0.0",percent:0,balance: "0",img:"../../static/img/mana-mon.jpg"},{name:"人情",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/favor.png"},{name:"生意",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/business.jpg"},
+        {name:"餐饮",budget: "0.0",percent:0,balance: "0",img:"../../static/img/food.png"},{name:"交通",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/traffic.png"},
+        {name:"购物",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/shop.png"}, {name:"娱乐",budget: "0.0",percent:0,balance: "0",img:"../../static/img/play.png"},
+        {name:"医教",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/hospital.png"}, {name:"居家",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/home.png"},
+        {name:"投资",budget: "0.0",percent:0,balance: "0",img:"../../static/img/mana-mon.jpg"},{name:"人情",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/favor.png"},
+        {name:"生意",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/business.jpg"},
       ],
 
       //提示信息框设置
@@ -157,9 +159,6 @@ export default{
       var year = new Date(this.currentDate).getYear(); //当前年
       year += (year < 2000) ? 1900 : 0;
       var _this=this;
-      console.log(this.detailMoney);
-      console.log(month);
-      console.log(this.payItem[0]);
       //执行请求，修改预算，
      this.$instance.post('budget/addBudget',{
         num:_this.detailMoney,
@@ -173,48 +172,43 @@ export default{
             _this.toastShow=true;
             _this.toastType="default";
             _this.toastText="设置成功";
-            _this.reload();
-          }else if(res.code===404){
-
-          }
+            _this.reload();//刷新页面数据
+          }else if(res.code===404){}
+          _this.toastShow=true;
+          _this.toastType="warn";
+          _this.toastText=res.message;
         }
       })
         .catch(function(err){
           console.log(err);
         });
-      this.isSaveShow=false;
-      this.reload();
+      this.isSaveShow=false;//修改确认框关掉
     },
     //重新加载方法，同步更新显示数据
     reload(month){
       var _this=this;
-      //获取请求数据，更新页面
       var month=new Date(this.currentDate).getMonth()+1;
       var year = new Date(this.currentDate).getYear(); //当前年
       year += (year < 2000) ? 1900 : 0;
-      this.$instance.post('budget/getBudgets',{
-        month:month,
-        year:year
+      this.$instance.post('budget/getBudgets',{  //获取请求数据，更新页面
+        month:month, year:year
       }).then(function(response){
         if(response.status==200){
           var res=response.data;
           if(res.code===200){
-           console.log(res);
-            console.log(res.budgetDetails.length);
             _this.budgets=res.budgets;
             _this.use=res.use;
             _this.unUse=res.unUse;
             if(res.budgetDetails.length>0){
-              _this.budgetDetail=res.budgetDetails;
+              _this.budgetDetail=res.budgetDetails;//存在详细预算，直接设置
             }else{
-              _this.budgetDetail=[
+              _this.budgetDetail=[//不存在，显示全为0.0
                 {name:"餐饮",budget: "0.0",percent:0,balance: "0",img:"../../static/img/food.png"},{name:"交通",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/traffic.png"},{name:"购物",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/shop.png"},
                 {name:"娱乐",budget: "0.0",percent:0,balance: "0",img:"../../static/img/play.png"}, {name:"医教",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/hospital.png"},{name:"居家",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/home.png"},
                 {name:"投资",budget: "0.0",percent:0,balance: "0",img:"../../static/img/mana-mon.jpg"},{name:"人情",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/favor.png"},{name:"生意",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/business.jpg"},
               ];
             }
           }else if(res.code===404){
-
           }
         }
       })

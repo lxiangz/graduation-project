@@ -30,22 +30,17 @@
   export default {
     data(){
       return{
-        startDate:"",
-        endDate:"",
-        //成员
-        selectedMember:"全部",
-        member:[""],
-        members:[[]],
-        isSelectMem:false,
-        //收支类型
-        selectedItem:"全部",
-        item:[],
-        items:[['全部', '收入', '支出']],
-        isSelectItem:false,
-        //收支项目
-        selectedItemDetails:"全部",
-        isSelectItemDetails:false,
-
+        startDate:"",//开始日期
+        endDate:"",//结束日期
+        selectedMember:"全部",//当前显示成员
+        member:[""],//当前选中成员
+        members:[[]],//可选择的成员列表
+        isSelectMem:false,//是否显示选择成员列表
+        selectedItem:"全部",//当前显示收支类型
+        item:[],//当前选择的收支类型
+        items:[['全部', '收入', '支出']],//可选择的收支类型成员表
+        isSelectItem:false,//是否显示选择收支类型列表
+        selectedItemDetails:"全部",//当前显示收支项目
         //警告信息
         toastShow:false,
         toastType:"warn",
@@ -177,9 +172,7 @@
     },
     mounted:function(){
      this.getMembers();
-
-
-
+      //获取查询状态
       this.selectedItemDetails=this.$store.state.detailSelectedItem;
       if(this.startDate==""){
         this.startDate=this.$store.state.todayDate

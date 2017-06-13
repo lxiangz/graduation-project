@@ -12,6 +12,7 @@ export default new Vuex.Store({
     isLoginSuccess:false,//是否已登陆
     todayDate:"",//
     page:"",//
+    cellPhone:"",//忘记密码页面的手机号
     //record页面
     paySelectedItem:'...',
     incomeSelectedItem:'...',
@@ -28,7 +29,7 @@ export default new Vuex.Store({
     //detail的页面数据保存
     startDate:"",
     endDate:"",
-    selectedMember:"家庭公共",
+    selectedMember:"全部",
     selectedItem:"全部",
 
     //查询条件保存
@@ -100,6 +101,10 @@ export default new Vuex.Store({
       state.checkMember=text.checkMember;
       state.checkItem=text.checkItem;
       state.checkItemDetail=text.checkItemDetail;
+    },
+
+    setCellPhone(state,text){
+      state.cellPhone=text;
     }
 
   },
