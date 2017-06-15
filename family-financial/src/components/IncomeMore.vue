@@ -1,7 +1,7 @@
 <template>
   <div class="income-more">
     <x-header :left-options="{backText: '',preventGoBack:true}"  @on-click-back="back" >类别</x-header>
-      <div>
+      <div style="height:572px;overflow-y: auto;">
         <p style="border-bottom:1px solid #DCDCDC;padding:10px 0 10px 15px;color:	#696969;font-size:14px;" v-for="(income,$index) of incomeTable" :key="income.id"><a href="javascript:;" v-on:click="selectDetails($index)">{{income}}</a></p>
       </div>
   </div>
@@ -53,6 +53,10 @@ export default{
         '应收款', '销售款', '报销款', '漏记款', '生活费', '公积金', '退款返款', '赔付款', '余额宝', '营业收入', '工程款', '其他'
       ]
     }
+    var _this=this;
+    plus.key.addEventListener("backbutton",function(){
+      _this.back();
+    });
   }
 }
 </script>

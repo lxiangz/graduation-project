@@ -1,6 +1,6 @@
 <template>
   <div id="change-name">
-    <x-header :left-options="{backText: '修改昵称'}"></x-header>
+    <x-header :left-options="{backText: '修改昵称',preventGoBack:true}"  @on-click-back="back"></x-header>
     <group gutter="0">
       <x-input  v-model="name" type="text" required placeholder="请输入新昵称" ></x-input>
     </group>
@@ -26,11 +26,18 @@ export default{
     }
   },
   mounted: function () {
+    var _this=this;
     /* 第一个输入框取得焦点 */
     var inputs=document.getElementById('change-name').getElementsByTagName('input');
     inputs[0].focus();
+    plus.key.addEventListener("backbutton",function(){
+      _this.back();
+    });
   },
   methods:{
+    back(){
+      this.$router.push("/personal");
+    },
     confirm(){
       var _this=this;
       if(this.name==""){

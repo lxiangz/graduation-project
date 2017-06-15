@@ -1,6 +1,6 @@
 <template>
   <div id="login" >
-    <x-header :left-options="{backText: '登陆'}"></x-header>
+    <x-header :left-options="{backText: '登陆',preventGoBack:true}"  @on-click-back="back"></x-header>
     <div class="mode">
       <div class="login-mode">
         <a>
@@ -61,6 +61,9 @@
       }
     },
     methods: {
+      back(){
+        this.$router.push("/home");
+      },
       register(){
         this.$router.push('/register')
       },
@@ -147,9 +150,13 @@
       //第一个输入框取得焦点
       var inputs = document.getElementById('login').getElementsByTagName('input');
       inputs[0].focus();
-
-      //判断是否已经有账号登陆
-      //console.log(this.$store.state.cellphone);
+      var _this=this;
+      plus.key.removeEventListener("backbutton",function(){
+        console.log("remove");
+      });
+      plus.key.addEventListener("backbutton",function(){
+        _this.back();
+      });
     },
     components: {
       XHeader,

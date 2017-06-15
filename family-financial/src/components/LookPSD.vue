@@ -1,7 +1,7 @@
 
 <template>
   <div id="look_PSD">
-    <x-header :left-options="{backText: '忘记密码'}"></x-header>
+    <x-header :left-options="{backText: '忘记密码',preventGoBack:true}"  @on-click-back="back"></x-header>
     <group gutter="0">
       <x-input type="tel" required placeholder=" 输入您的手机号"  v-model="cellphone" >
         <img  slot="label" src="../assets/img/cellphone.png" />
@@ -37,6 +37,9 @@ export default{
     }
   },
   methods:{
+    back(){
+      this.$router.push("/login");
+    },
     //一分钟后可再次点击获取验证码按钮
     setClickAgain(){
       this.isGetCode=true;
@@ -136,6 +139,10 @@ export default{
     //第一个输入框取得焦点
     var inputs = document.getElementById('look_PSD').getElementsByTagName('input');
     inputs[0].focus();
+    var _this=this;
+    plus.key.addEventListener("backbutton",function(){
+      _this.back();
+    });
   },
   components:{
     XHeader,

@@ -1,6 +1,6 @@
 <template>
   <div id="add-member">
-    <x-header :left-options="{backText: '关联账号'}"></x-header>
+    <x-header :left-options="{backText: '关联账号',preventGoBack:true}"  @on-click-back="back"></x-header>
     <group gutter="0">
       <x-input type="tel" required placeholder=" 输入关联手机号"  v-model="cellphone" >
         <img  slot="label" src="../assets/img/cellphone.png" />
@@ -23,7 +23,7 @@
       <box class="related-account" id="related-members">
         <div class="little-container"  v-for="(item,$index) of members" :key="item.id" @click="selectedMember($index)" :id="item.id">
           <a>
-            <img  src="../assets/img/icon_nav_msg.png" />
+            <img  width="40px"  :src="item.icon" />
             <span>{{item.username}}</span>
           </a>
         </div>
@@ -55,6 +55,9 @@ export default{
     }
   },
   methods:{
+    back(){
+      this.$router.push("/personal");
+    },
     setClickAgain(){
       this.isGetCode=true;
       var time=60;
@@ -202,6 +205,7 @@ export default{
         if(response.status==200){
           var res=response.data;
           if(res.code===200){//设置当前组件绑定数据members
+            console.log(res);
            _this.members.splice(0,_this.members.length);//清空当前数据
             if(res.list.length>0){
               for(var i=res.list.length-1;i>=0;i--){
@@ -253,10 +257,14 @@ export default{
     }
   },
   mounted:function(){
+    var _this=this;
     //第一个输入框取得焦点
     var inputs = document.getElementById('add-member').getElementsByTagName('input');
     inputs[0].focus();
     this.reload();
+    plus.key.addEventListener("backbutton",function(){
+      _this.back();
+    });
   },
   components:{
     XHeader,

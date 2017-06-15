@@ -1,6 +1,6 @@
 <template>
   <div id="register">
-    <x-header :left-options="{backText: '手机号注册'}"></x-header>
+    <x-header :left-options="{backText: '手机号注册',preventGoBack:true}"  @on-click-back="back"></x-header>
     <group gutter="0">
       <x-input type="tel" required placeholder=" 请输入手机号"  v-model="cellphone" >
         <img  slot="label" src="../assets/img/cellphone.png" />
@@ -50,6 +50,9 @@
       }
     },
     methods: {
+      back(){
+        this.$router.push("/login");
+      },
       //一分钟后可再次点击获取验证码按钮
       setClickAgain(){
         this.isGetCode = true;//控制按钮是否允许点击，disabled属性绑定数据
@@ -186,11 +189,14 @@
       inputs[0].focus();
       var _this=this;
       //为密码框添加获得焦点事件
-      inputs[2].onfocus = function () {;
+      inputs[2].onfocus = function () {
         _this.textShow = true;
         _this.text = "长度在6-16位,由字母、数字、特殊符号组成";
         _this.textType="text";
       };
+      plus.key.addEventListener("backbutton",function(){
+        _this.back();
+      });
     },
     components: {
       Group,

@@ -1,9 +1,9 @@
 <template>
   <div id="personal">
-    <x-header :left-options="{backText: '我的资料'}"></x-header>
+    <x-header :left-options="{backText: '我的资料',preventGoBack:true}"  @on-click-back="back"></x-header>
     <group>
       <cell is-link title="头像"  @click.native="selectImg">
-        <img slot="default" width="40px" src="../assets/vux_logo.png" />
+        <img slot="default" class="personal-img"   width="40px" src="../assets/vux_logo.png" />
       </cell>
       <cell is-link title="昵称" :value="name" link="/changename"></cell>
       <cell is-link title="手机号" :value="cellphone" link="/changetel"></cell>
@@ -11,9 +11,9 @@
     <group>
       <cell is-link title="账号绑定">
         <div slot="default">
-          <img class="login" width="25px" src="../assets/img/qq_icon.jpg" />
-          <img class="login" width="25px" src="../assets/img/wechat_icon.png" />
-          <img class="login" width="25px" src="../assets/img/blog_icon.png" />
+          <img class="personal-img" width="25px" src="../assets/img/qq_icon.jpg" />
+          <img class="personal-img" width="25px" src="../assets/img/wechat_icon.png" />
+          <img class="personal-img" width="25px" src="../assets/img/blog_icon.png" />
         </div>
       </cell>
       <cell is-link title="关联账号" link="/addmember"></cell>
@@ -65,6 +65,9 @@
       }
     },
     methods: {
+      back(){
+        this.$router.push("/home");
+      },
       exit(){
         var _this = this;
         //退出登陆
@@ -148,7 +151,7 @@
       },
       uploadImg(url){
         var _this=this;
-        var canvas = document.createElement('CANVAS'),
+       /* var canvas = document.createElement('CANVAS'),
           ctx = canvas.getContext('2d'),
           img = new Image;
         img.crossOrigin = 'Anonymous';
@@ -177,28 +180,102 @@
             });
 
         };
-        img.src = require("../assets/logo.png");
+        img.src = require("../assets/logo.png");*/
+        //上传服务器
+        _this.$instance.post('pic/upload',{
+          uploadFile:url
+        }).then(function(response){
+          if(response.status==200){
+            var res=response.data;
+            console.log(response);
+            if(res.code==200){
+              document.getElementsByTagName("img")[0].src=res.url;
+            }else{
+            }
+          }else{
+          }
+        })
+          .catch(function(err){
+            console.log(err);
+          });
       },
+      reload(){
+        //获取昵称、手机号 测试完成
+        //获取头像、昵称、手机号
+        var _this = this;
+        this.$instance.get('user/getUser').then(function (response) {
+          if (response.status == 200) {
+            var res = response.data;
+            console.log(res);
+            if (res.code === 200) {
+              _this.name = res.user.username;
+              _this.cellphone = res.user.phone;
+              document.getElementsByTagName("img")[0].src=res.user.icon;
+            } else if (res.code === 400) {
+              console.log(res.message);
+            }
+          }
+        })
+          .catch(function (err) {
+            console.log(err);
+          });
+      },
+      //滑动事件添加
+      load(){
+        var _this=this;
+        var startX,startY,moveEndX,moveEndY,X,Y;
+        document.addEventListener('touchstart',touch, false);
+        document.addEventListener('touchmove',touch, false);
+        document.addEventListener('touchend',touch, false);
+        function touch (event){
+          var event = event || window.event;
+          switch(event.type){
+            case "touchstart":
+              event.preventDefault();
+              startX=event.touches[0].clientX;
+              startY=event.touches[0].clientY;
+              break;
+            case "touchmove":
+              break;
+            case "touchend":
+              event.preventDefault();
+              moveEndX=event.changedTouches[0].clientX;
+              moveEndY=event.changedTouches[0].clientY
+              X=moveEndX-startX;
+              Y=moveEndY-startY;
+              if ( Math.abs(X) > Math.abs(Y) && X > 0 ) {
+
+              }
+              else if ( Math.abs(X) > Math.abs(Y) && X < 0 ) {
+                _this.$router.push("/detail");
+              }
+              else if ( Math.abs(Y) > Math.abs(X) && Y > 0) {
+                //console.log("top 2 bottom");
+              }
+              else if ( Math.abs(Y) > Math.abs(X) && Y < 0 ) {
+                //console.log("bottom 2 top");
+              }
+              else{
+                //console.log("just touch");
+              }
+              break;
+          }
+        }
+      }
     },
     mounted: function () {
       //获取昵称、手机号 测试完成
       //获取头像、昵称、手机号
-      var _this = this;
-      this.uploadImg("");
-      this.$instance.get('user/getUser').then(function (response) {
-        if (response.status == 200) {
-          var res = response.data;
-          if (res.code === 200) {
-            _this.name = res.user.username;
-            _this.cellphone = res.user.phone;
-          } else if (res.code === 400) {
-            console.log(res.message);
-          }
-        }
-      })
-        .catch(function (err) {
-          console.log(err);
-        });
+      this.reload();
+      var _this=this;
+      plus.key.removeEventListener("backbutton",function(){
+        console.log("remove");
+      });
+      plus.key.addEventListener("backbutton",function(){
+        _this.back();
+      });
+      //页面滑动
+      //window.addEventListener('load',this.load(), false);
     },
     components: {
       XHeader,
@@ -212,7 +289,7 @@
   }
 </script>
 <style lang="less">
-  img{
+  .personal-img{
     border-radius:50%;
     border:1px solid #DCDCDC;
   }

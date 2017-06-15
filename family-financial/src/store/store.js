@@ -11,7 +11,8 @@ export default new Vuex.Store({
   state: {
     isLoginSuccess:false,//是否已登陆
     todayDate:"",//
-    page:"",//
+    page:"",//选择更多收入项的页面
+    detailPage:"",//进入明细的页面
     cellPhone:"",//忘记密码页面的手机号
     //record页面
     paySelectedItem:'...',
@@ -72,9 +73,13 @@ export default new Vuex.Store({
       state.isLoginSuccess=text;
     },
 
-    //改变页面
+    //改变选择更多项页面
     changePage(state,text){
       state.page=text;
+    },
+    //改变进去明细页面的page
+    changeDetailPage(state,text){
+      state.detailPage=text;
     },
     changeDetailSelected(state,text){
       state.detailSelectedItem=text;

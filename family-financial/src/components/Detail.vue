@@ -129,7 +129,8 @@
         console.log(this.selectedMember);
         console.log(this.selectedItem);
         console.log(this.selectedItemDetails);
-      this.$router.push("/checkdetails");
+        this.$store.commit("changeDetailPage","detail")
+        this.$router.push("/checkdetails");
       },
       //获得昵称
       getMembers(){
@@ -168,9 +169,50 @@
           .catch(function(err){
             console.log(err);
           });
+      },
+      //滑动事件添加
+      load(){
+        var _this=this;
+        var startX,startY,moveEndX,moveEndY,X,Y;
+        document.addEventListener('touchstart',touch, false);
+        document.addEventListener('touchmove',touch, false);
+        document.addEventListener('touchend',touch, false);
+        function touch (event){
+          var event = event || window.event;
+          switch(event.type){
+            case "touchstart":
+              startX=event.touches[0].clientX;
+              startY=event.touches[0].clientY;
+              break;
+            case "touchmove":
+              break;
+            case "touchend":
+              moveEndX=event.changedTouches[0].clientX;
+              moveEndY=event.changedTouches[0].clientY
+              X=moveEndX-startX;
+              Y=moveEndY-startY;
+              if ( Math.abs(X) > Math.abs(Y) && X > 0 ) {
+                _this.$router.push("/personal");
+              }
+              else if ( Math.abs(X) > Math.abs(Y) && X < 0 ) {
+                _this.$router.push("/home");
+              }
+              else if ( Math.abs(Y) > Math.abs(X) && Y > 0) {
+                //console.log("top 2 bottom");
+              }
+              else if ( Math.abs(Y) > Math.abs(X) && Y < 0 ) {
+                //console.log("bottom 2 top");
+              }
+              else{
+                //console.log("just touch");
+              }
+              break;
+          }
+        }
       }
     },
     mounted:function(){
+      var _this=this;
      this.getMembers();
       //获取查询状态
       this.selectedItemDetails=this.$store.state.detailSelectedItem;
@@ -187,6 +229,15 @@
       this.selectedMember=this.$store.state.selectedMember;
       this.selectedItem=this.$store.state.selectedItem;
 
+
+      //页面滑动
+      //window.addEventListener('load',this.load(), false);
+      plus.key.removeEventListener("backbutton",function(){
+        console.log("remove");
+      });
+      plus.key.addEventListener("backbutton",function(){
+        _this.back();
+      });
     }
   }
 </script>

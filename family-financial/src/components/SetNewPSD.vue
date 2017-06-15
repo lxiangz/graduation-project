@@ -1,6 +1,6 @@
 <template>
   <div id="set_new_PSD">
-    <x-header :left-options="{backText: '设置新密码'}"></x-header>
+    <x-header :left-options="{backText: '设置新密码',preventGoBack:true}"  @on-click-back="back"></x-header>
     <span class="warn">*设置新的密码</span>
     <group gutter="0">
       <x-input id="set_PSD" class="psd_input" v-model="newPSD" type="password" required placeholder="6-16位,由字母、数字、特殊符号组成" ></x-input>
@@ -39,6 +39,9 @@ export default{
     }
   },
   methods:{
+    back(){
+      this.$router.push("/lookPSD");
+    },
     //测试完成
     confirm(){
       var _this=this;
@@ -109,6 +112,10 @@ export default{
     /* 第一个输入框取得焦点 */
     var set_PSD=document.getElementById('set_PSD').getElementsByTagName('input');
      set_PSD[0].focus();
+    var _this=this;
+    plus.key.addEventListener("backbutton",function(){
+      _this.back();
+    });
   }
 }
 

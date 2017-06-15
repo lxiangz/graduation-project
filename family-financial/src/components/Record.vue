@@ -74,7 +74,7 @@
           </a>
           <a href="javascript:;" >
             <div class="little-container " >
-              <img id="pay-primary" @click="selectedMember" width="56px" src="../assets/logo.png" />
+              <img id="pay-primary"  @click="selectedMember" width="56px" src="../assets/vux_logo.png" />
               <span>{{name}}</span>
             </div>
           </a>
@@ -82,7 +82,7 @@
         <box class="cost-people" v-show="!isPay">
           <div class="little-container select " id="income-primary" @click="selectedMember">
             <a >
-              <img width="56px" src="../assets/logo.png" />
+              <img width="56px" src="../assets/vux_logo.png" />
               <span>{{name}}</span>
             </a>
           </div>
@@ -321,6 +321,8 @@ export default{
         var res=response.data;
         if(res.code===200){
           console.log("sss");
+          document.getElementsByTagName("img")[1].src=res.user.icon;
+          document.getElementsByTagName("img")[2].src=res.user.icon;
           _this.name=res.user.username;
         }else if(res.code===400){
           console.log(res.message);
@@ -330,6 +332,12 @@ export default{
       .catch(function(err){
         console.log(err);
       });
+    plus.key.removeEventListener("backbutton",function(){
+      console.log("remove");
+    });
+    plus.key.addEventListener("backbutton",function(){
+      _this.back();
+    });
   }
 }
 </script>

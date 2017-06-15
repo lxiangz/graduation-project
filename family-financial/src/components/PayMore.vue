@@ -2,7 +2,7 @@
   <div class="pay-more">
     <x-header :left-options="{backText: '',preventGoBack:true}" @on-click-back="back" >类别</x-header>
     <div class="pay-menus" id="left">
-      <p class="pay-menu"  v-for="(pay,$index) of payMenu" :key="pay.id""><a href="javascript:;" v-on:click="openDetails($index)">{{ pay.text}}</a></p>
+      <p class="pay-menu"  v-for="(pay,$index) of payMenu" :key="pay.id"><a href="javascript:;" v-on:click="openDetails($index)">{{ pay.text}}</a></p>
     </div>
     <div class="pay-details" id="right">
         <p class="pay-menu" v-for="(paydetails,$index) of payDetails" :key="paydetails.id"><a href="javascript:;" v-on:click="selectDetails($index)">{{paydetails}}</a></p>
@@ -111,6 +111,11 @@ export default{
 
     var pay_menus=document.getElementById('left').getElementsByTagName('p');
     pay_menus[0].setAttribute('class','pay-menu selected');
+
+    var _this=this;
+    plus.key.addEventListener("backbutton",function(){
+      _this.back();
+    });
   },
   components:{
     XHeader,
@@ -127,7 +132,7 @@ export default{
 <style scoped>
 .pay-menus{
   float: left;
-  height:621px;
+  height:572px;
 width:25%;
   background-color:	#DCDCDC;
 }
@@ -146,7 +151,8 @@ a:-webkit-any-link {
 .pay-details{
  float: left;
   width:75%;
-
+height:572px;
+  overflow-y: auto;
 }
 .details_selected{
   background-color:	#F5F5F5;

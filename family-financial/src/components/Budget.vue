@@ -1,6 +1,6 @@
 <template>
   <div class="budget">
-    <x-header :left-options="{backText: '设置预算'}"></x-header>
+    <x-header :left-options="{backText: '设置预算',preventGoBack:true}"  @on-click-back="back"></x-header>
     <group gutter="0" >
       <calendar title="选择月份" v-model="currentDate" @on-change="monthChange"></calendar>
     </group>
@@ -46,7 +46,7 @@
 
     <group gutter="0" style="width:100%;border-top:15px solid #DCDCDC">
       <cell  title="详细预算:"  style="font-weight:bold;color:darkgreen;font-size: larger" ></cell>
-      <scroller lock-x height="-380">
+      <div class="budget-detail" id="details" >
         <cell  is-link v-for="(item,$index) of budgetDetail" :key="item.id">
           <img slot="icon" width="45px" :src="item.img" />
           <div   slot="after-title" style="margin-left:5px;height:50px;">
@@ -57,7 +57,7 @@
             <span style="color:grey;font-size:15px;">预算 {{item.budget}}</span>
           </div>
         </cell>
-      </scroller>
+      </div>
     </group>
     <!--显示警告信息-->
     <toast v-model="toastShow" width="9.5em" :type="toastType"  position="top">
@@ -68,7 +68,7 @@
     </div>
 </template>
 <script type="es6">
-import {XHeader,Group,Cell,Icon,XInput,InlineCalendar,Picker,XButton,XProgress,Scroller,Confirm,Toast,Calendar} from 'vux'
+import {XHeader,Group,Cell,Icon,XInput,InlineCalendar,Picker,XButton,XProgress,Confirm,Toast,Calendar} from 'vux'
 const payItems=['餐饮', '交通', '购物', '娱乐', '医教', '居家', '投资', '人情', '生意'];
 export default{
   data(){
@@ -88,7 +88,7 @@ export default{
         {name:"餐饮",budget: "0.0",percent:0,balance: "0",img:"../../static/img/food.png"},{name:"交通",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/traffic.png"},
         {name:"购物",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/shop.png"}, {name:"娱乐",budget: "0.0",percent:0,balance: "0",img:"../../static/img/play.png"},
         {name:"医教",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/hospital.png"}, {name:"居家",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/home.png"},
-        {name:"投资",budget: "0.0",percent:0,balance: "0",img:"../../static/img/mana-mon.jpg"},{name:"人情",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/favor.png"},
+        {name:"投资",budget: "0.0",percent:0,balance: "0",img:"../../static/img/mana-mon.png"},{name:"人情",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/favor.png"},
         {name:"生意",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/business.jpg"},
       ],
 
@@ -103,6 +103,9 @@ export default{
     }
   },
   methods:{
+    back(){
+      this.$router.push("/home");
+    },
     selectPay(){
       if(this.isShow){
         this.isShow=false;
@@ -122,8 +125,10 @@ export default{
       var currentMonth=new Date(this.$store.state.todayDate);
      if(month<currentMonth){
        document.getElementById("setBudget").style.display="none";
+       document.getElementById("details").className="budget-detail-hide";
      }else{
        document.getElementById("setBudget").style.display="block";
+       document.getElementById("details").className="budget-detail";
      }
 
       this.reload();
@@ -205,7 +210,7 @@ export default{
               _this.budgetDetail=[//不存在，显示全为0.0
                 {name:"餐饮",budget: "0.0",percent:0,balance: "0",img:"../../static/img/food.png"},{name:"交通",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/traffic.png"},{name:"购物",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/shop.png"},
                 {name:"娱乐",budget: "0.0",percent:0,balance: "0",img:"../../static/img/play.png"}, {name:"医教",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/hospital.png"},{name:"居家",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/home.png"},
-                {name:"投资",budget: "0.0",percent:0,balance: "0",img:"../../static/img/mana-mon.jpg"},{name:"人情",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/favor.png"},{name:"生意",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/business.jpg"},
+                {name:"投资",budget: "0.0",percent:0,balance: "0",img:"../../static/img/mana-mon.png"},{name:"人情",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/favor.png"},{name:"生意",budget: "0.0",percent:0,balance: "0.0",img:"../../static/img/business.jpg"},
               ];
             }
           }else if(res.code===404){
@@ -220,7 +225,15 @@ export default{
     }
   },
   mounted:function () {
+    var _this=this;
     this.currentDate=this.$store.state.todayDate;
+    this.reload();
+    plus.key.removeEventListener("backbutton",function(){
+      console.log("remove");
+    });
+    plus.key.addEventListener("backbutton",function(){
+      _this.back();
+    });
   },
   components:{
     XHeader,
@@ -232,7 +245,6 @@ export default{
     Picker,
     XButton,
     XProgress,
-    Scroller,
     Confirm,
     Toast,
     Calendar
@@ -272,4 +284,15 @@ export default{
   width:43%;
   border-left:1px dotted;
 }
+
+
+  /*滚动div样式设置*/
+  .budget-detail{
+    height:210px;
+    overflow-y: auto;
+  }
+  .budget-detail-hide{
+    height:320px;
+    overflow-y: auto;
+  }
 </style>

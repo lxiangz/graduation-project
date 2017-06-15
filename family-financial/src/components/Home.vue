@@ -97,7 +97,7 @@
           <span slot="label">账户</span>
       </tabbar-item>
       <tabbar-item  @click.native="money">
-        <img slot="icon" src="../../static/img/mana-mon.jpg">
+        <img slot="icon" src="../../static/img/mana-mon.png">
           <span slot="label">理财</span>
       </tabbar-item>
     </tabbar>
@@ -194,6 +194,7 @@ export default {
           checkItem:"收入",
           checkItemDetail:"全部",
         });
+        this.$store.commit("changeDetailPage","home")
         this.$router.push('/checkdetails');
       }else{
         this.toastText="您还未登录，不能查看本月收入！";
@@ -211,6 +212,7 @@ export default {
           checkItem:"支出",
           checkItemDetail:"全部",
         });
+        this.$store.commit("changeDetailPage","home")
         this.$router.push('/checkdetails');
       }else{
         this.toastText="您还未登录，不能查看本月支出！";
@@ -237,6 +239,7 @@ export default {
           checkItem:"全部",
           checkItemDetail:"全部",
         });
+        this.$store.commit("changeDetailPage","home")
         this.$router.push('/checkdetails');
       }else{
         this.toastText="您还未登录，不能查看今天账单！";
@@ -254,6 +257,7 @@ export default {
           checkItem:"全部",
           checkItemDetail:"全部",
         });
+        this.$store.commit("changeDetailPage","home")
         this.$router.push('/checkdetails');
       }else{
         this.toastText="您还未登录，不能查看本周账单！";
@@ -271,20 +275,62 @@ export default {
           checkItem:"全部",
           checkItemDetail:"全部",
         });
+        this.$store.commit("changeDetailPage","home")
         this.$router.push('/checkdetails');
       }else{
         this.toastText="您还未登录，不能查看本月账单！";
         this.toastType="warn";
         this.toastShow=true;
       }
+    },
+    //滑动事件添加
+    load(){
+      var _this=this;
+      var startX,startY,moveEndX,moveEndY,X,Y;
+      document.addEventListener('touchstart',touch, false);
+      document.addEventListener('touchmove',touch, false);
+      document.addEventListener('touchend',touch, false);
+      function touch (event){
+        var event = event || window.event;
+        switch(event.type){
+          case "touchstart":
+            startX=event.touches[0].clientX;
+            startY=event.touches[0].clientY;
+            break;
+          case "touchmove":
+            break;
+          case "touchend":
+            moveEndX=event.changedTouches[0].clientX;
+            moveEndY=event.changedTouches[0].clientY
+            X=moveEndX-startX;
+            Y=moveEndY-startY;
+            if ( Math.abs(X) > Math.abs(Y) && X > 0 ) {
+              _this.$router.push("/detail");
+            }
+            else if ( Math.abs(X) > Math.abs(Y) && X < 0 ) {
+              //console.log("right 2 left");
+            }
+            else if ( Math.abs(Y) > Math.abs(X) && Y > 0) {
+              //console.log("top 2 bottom");
+            }
+            else if ( Math.abs(Y) > Math.abs(X) && Y < 0 ) {
+              //console.log("bottom 2 top");
+            }
+            else{
+              //console.log("just touch");
+            }
+            break;
+        }
+      }
     }
   },
   mounted:function(){
-    var _this=this;
-  this.$router.push("personal");
+        var _this=this;
+    //this.$router.push("/incomemore")
     //获取登录状态
     this.$instance.get('user/loginState').then(function(response){
       var res=response.data;
+      console.log(res);
       if(response.status==200){
         if(res.code==200){ //已登陆,获取昵称，获取今天有无记账，获取有无设置预算
           _this.isLogin=true;
@@ -403,6 +449,14 @@ export default {
     }
     this.monthIconSrc=require("../../static/img/month"+nowMonth+".png");
     this.weekIconSrc=require("../../static/img/week"+nowDayOfWeek+".png");
+
+
+   plus.key.addEventListener("backbutton",function(){
+      plus.runtime.quit();
+      });
+
+    //页面滑动
+   // window.addEventListener('load',this.load(), false);
   },
   components: {
     Flexbox,

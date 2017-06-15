@@ -1,7 +1,7 @@
 <template>
   <div id="change-tel">
     <div>
-      <x-header :left-options="{backText: '修改手机号'}"></x-header>
+      <x-header :left-options="{backText: '修改手机号',preventGoBack:true}"  @on-click-back="back"></x-header>
       <group gutter="0">
         <x-input type="tel" required placeholder=" 请输入手机号"  v-model="cellphone" >
           <img  slot="label" src="../assets/img/cellphone.png" />
@@ -62,8 +62,15 @@ export default{
     /* 第一个输入框取得焦点 */
     var inputs=document.getElementById('change-tel').getElementsByTagName('input');
     inputs[0].focus();
+    var _this=this;
+    plus.key.addEventListener("backbutton",function(){
+      _this.back();
+    });
   },
   methods:{
+    back(){
+      this.$router.push("/personal");
+    },
     //一分钟后可再次点击获取验证码按钮
     setClickAgain(){
       this.isGetCode = true;

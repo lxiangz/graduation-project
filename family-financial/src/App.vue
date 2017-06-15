@@ -12,7 +12,13 @@ export default {
   data(){
     return{}
   },
-  store
+  store,
+  methods:{
+
+ },
+  mounted:function(){
+
+  }
 }
 </script>
 
